@@ -73,4 +73,15 @@ public class Task {
     public int hashCode() {
         return id.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status +
+                '}';
+    }
 }
