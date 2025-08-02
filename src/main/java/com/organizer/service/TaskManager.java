@@ -1,7 +1,7 @@
 package com.organizer.service;
 
 import com.organizer.model.Project;
-import com.organizer.model.Task;
+import com.organizer.model.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;
