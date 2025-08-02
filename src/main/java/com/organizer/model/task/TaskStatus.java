@@ -1,4 +1,4 @@
-package com.organizer.model;
+package com.organizer.model.task;
 
 public enum TaskStatus {
 
