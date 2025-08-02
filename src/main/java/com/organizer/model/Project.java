@@ -1,5 +1,7 @@
 package com.organizer.model;
 
+import com.organizer.model.task.Task;
+
 import java.util.List;
 
 public class Project {
