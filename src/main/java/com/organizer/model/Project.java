@@ -29,4 +29,11 @@ public class Project {
     public List<Task> getTaskList() {
         return taskList;
     }
+
+    public boolean addTask(Task task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null.");
+        }
+        return taskList.add(task);
+    }
 }
