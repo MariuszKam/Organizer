@@ -1,6 +1,6 @@
 package com.organizer.model.task;
 
-import com.organizer.model.User.User;
+import com.organizer.model.user.User;
 
 public class Task {
 

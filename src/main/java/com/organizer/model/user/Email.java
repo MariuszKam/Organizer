@@ -1,4 +1,4 @@
-package com.organizer.model.User;
+package com.organizer.model.user;
 
 public class Email {
 
