@@ -39,6 +39,13 @@ public class Project {
         return taskList;
     }
 
+    public boolean addTask(Task task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null.");
+        }
+        return taskList.add(task);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
