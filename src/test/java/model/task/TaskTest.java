@@ -19,7 +19,7 @@ public class TaskTest {
                      String.format("Expected task description to be \"This is a test task description.\", but got %s", task.getDescription()));
         assertEquals("Medium", task.getPriority().getDisplayName(),
                      String.format("Expected task priority to be \"Medium\", but got %s", task.getPriority().getDisplayName()));
-        assertEquals("Todo", task.getStatus().getDisplayName(),
+        assertEquals("To Do", task.getStatus().getDisplayName(),
                      String.format("Expected task status to be \"Todo\", but got %s", task.getStatus().getDisplayName()));
     }
 
@@ -105,7 +105,7 @@ public class TaskTest {
     @Test
     public void testSetStatusInProgress() {
         Task task = new Task(1L, "Task Name", "Task Description");
-        assertEquals("Todo", task.getStatus().getDisplayName(),
+        assertEquals("To Do", task.getStatus().getDisplayName(),
                      String.format("Expected task status to be \"Todo\", but got %s", task.getStatus().getDisplayName()));
 
         task.setStatus(TaskStatus.IN_PROGRESS);
@@ -116,7 +116,7 @@ public class TaskTest {
     @Test
     public void testSetStatusDone() {
         Task task = new Task(1L, "Task Name", "Task Description");
-        assertEquals("Todo", task.getStatus().getDisplayName(),
+        assertEquals("To Do", task.getStatus().getDisplayName(),
                      String.format("Expected task status to be \"Todo\", but got %s", task.getStatus().getDisplayName()));
 
         task.setStatus(TaskStatus.DONE);
@@ -137,7 +137,7 @@ public class TaskTest {
         Task task1 = new Task(1L, "Task A", "Description A");
         Task task2 = new Task(2L, "Task B", "Description B");
 
-        assertEquals(task1, task2, "Tasks with different IDs should not be equal");
+        assertNotEquals(task1, task2, "Tasks with different IDs should not be equal");
     }
 
     @Test
