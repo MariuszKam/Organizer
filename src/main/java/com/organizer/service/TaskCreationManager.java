@@ -7,17 +7,18 @@ import com.organizer.model.task.TaskStatus;
 import com.organizer.model.user.User;
 
 import java.util.List;
+import java.util.Map;
 
 public class TaskCreationManager {
 
     private static TaskCreationManager instance;
-    private final List<Project> projectList;
+    private final Map<Project, List<Task>> taskByProject;
 
-    private TaskCreationManager(List<Project> fetchedProjects) {
-        this.projectList = fetchedProjects;
+    private TaskCreationManager(Map<Project, List<Task>> fetchedProjects) {
+        this.taskByProject = fetchedProjects;
     }
 
-    public static TaskCreationManager create(List<Project> fetchedProjects) {
+    public static TaskCreationManager create(Map<Project, List<Task>> fetchedProjects) {
         if (instance == null) {
             instance = new TaskCreationManager(fetchedProjects);
         }
@@ -29,24 +30,16 @@ public class TaskCreationManager {
         return new Task(taskId, name, description, priority, status, assignedUser);
     }
 
-    public boolean addTaskToProject(Long projectId, String taskName, String taskDescription) {
-        for (Project project : projectList) {
-            if (project.getId().equals(projectId)) {
-                return project.addTask(taskName, taskDescription);
-            }
-        }
-        return false; // Project not found
-    }
-
     private Long generateTaskId() {
         Long maxId = 1L;
-        for (Project project : projectList) {
-            for (Task task : project.getTaskList()) {
+        for (List<Task> value : taskByProject.values()) {
+            for (Task task : value) {
                 if (task.getId() > maxId) {
                     maxId = task.getId();
                 }
             }
         }
+
         return maxId + 1;
     }
 }
