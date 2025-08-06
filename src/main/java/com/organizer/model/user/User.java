@@ -15,6 +15,9 @@ public class User {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
         this.username = username;
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
         this.email = email;
     }
 
