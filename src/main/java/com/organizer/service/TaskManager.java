@@ -10,9 +10,11 @@ public final class TaskManager {
 
     private static TaskManager instance;
     private final List<Project> projectList;
+    private final TaskCreationManager taskCreationManager;
 
     private TaskManager() {
         this.projectList = new ArrayList<>();
+        this.taskCreationManager = TaskCreationManager.create(projectList);
     }
 
     public static TaskManager create() {
@@ -22,13 +24,7 @@ public final class TaskManager {
         return instance;
     }
 
-    public static void createNewTask(Task task, Project project) {
-        if (instance == null) {
-            throw new IllegalStateException("TaskManager is not initialized. Call create() first.");
-        }
-        if (task == null || project == null) {
-            throw new IllegalArgumentException("Task and Project cannot be null.");
-        }
-        project.addTask(task);
+    public TaskCreationManager getTaskCreationManager() {
+        return taskCreationManager;
     }
 }
