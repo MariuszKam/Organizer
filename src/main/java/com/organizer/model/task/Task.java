@@ -1,5 +1,7 @@
 package com.organizer.model.task;
 
+import com.organizer.model.user.User;
+
 public class Task {
 
     private final Long id;
@@ -7,6 +9,7 @@ public class Task {
     private String description;
     private TaskPriority priority;
     private TaskStatus status;
+    private User assignedUser;
 
     public Task(Long id, String name, String description) {
         if (id == null) {
@@ -23,6 +26,14 @@ public class Task {
         this.description = description;
         this.priority = TaskPriority.MEDIUM;
         this.status = TaskStatus.TODO;
+        this.assignedUser = null;
+    }
+
+    public Task(Long id, String name, String description, TaskPriority priority, TaskStatus status, User assignedUser) {
+        this(id, name, description);
+        this.priority = priority;
+        this.status = status;
+        this.assignedUser = assignedUser;
     }
 
     public Long getId() {
@@ -61,6 +72,14 @@ public class Task {
         this.status = status;
     }
 
+    public User getAssignedUser() {
+        return assignedUser;
+    }
+
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -82,6 +101,7 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", priority=" + priority +
                 ", status=" + status +
+                ", assignedUser=" + assignedUser +
                 '}';
     }
 }
