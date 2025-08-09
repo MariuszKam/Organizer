@@ -2,18 +2,17 @@ package com.organizer.service.task;
 
 import com.organizer.model.Project;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public final class TaskManager {
 
     private static TaskManager instance;
-    private final Map<Project, List<Task>> taskByProject;
+    private final List<Project> taskByProject;
     private final TaskCreationManager taskCreationManager;
 
     private TaskManager() {
-        this.taskByProject = new HashMap<>();
+        this.taskByProject = new ArrayList<>();
         this.taskCreationManager = TaskCreationManager.create(taskByProject);
     }
 
