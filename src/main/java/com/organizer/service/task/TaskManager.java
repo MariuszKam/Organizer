@@ -1,4 +1,4 @@
-package com.organizer.service;
+package com.organizer.service.task;
 
 import com.organizer.model.Project;
 

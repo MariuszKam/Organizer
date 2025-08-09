@@ -1,4 +1,4 @@
-package com.organizer.service;
+package com.organizer.service.task;
 
 import com.organizer.model.Project;
 import com.organizer.model.task.Task;
@@ -27,6 +27,14 @@ public final class TaskCreationManager {
     public Task createTask(String name, String description, TaskPriority priority, TaskStatus status, User assignedUser) {
         Long taskId = generateTaskId();
         return new Task(taskId, name, description, priority, status, assignedUser);
+    }
+
+    public Project addTaskToProject(Task task, Project project) {
+        if (project == null) {
+            throw new IllegalArgumentException("Project and Task cannot be null");
+        }
+        project.addTask(task);
+        return project;
     }
 
     private Long generateTaskId() {
