@@ -1,10 +1,12 @@
 package com.organizer.model.user;
 
-public class User {
+import java.util.Locale;
+
+public final class User {
 
     private final Long id;
-    private final String username;
-    private final Email email;
+    private String username;
+    private Email email;
 
     public User(Long id, String username, Email email) {
         if (id == null) {
@@ -14,7 +16,7 @@ public class User {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
-        this.username = username;
+        this.username = username.strip().toLowerCase(Locale.ROOT);
         if (email == null) {
             throw new IllegalArgumentException("Email cannot be null");
         }
