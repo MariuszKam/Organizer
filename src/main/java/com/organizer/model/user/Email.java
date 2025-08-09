@@ -18,4 +18,10 @@ public record Email(String emailAddress) {
     public static Email of(String emailAddress) {
         return new Email(emailAddress);
     }
+
+    @Override
+    public String toString() {
+        int at = emailAddress.indexOf('@');
+        return emailAddress.charAt(0) + "***" + emailAddress.substring(at);
+    }
 }
