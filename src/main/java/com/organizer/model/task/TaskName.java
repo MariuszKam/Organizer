@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public record TaskName(String name) {
 
-    private static final Pattern PATTERN = Pattern.compile("^[a-zA-Z0-9_\\- ]{1,50}$");
+    private static final Pattern PATTERN = Pattern.compile("^.{1,50}$");
 
     public TaskName {
         Objects.requireNonNull(name, "Task name cannot be null");
