@@ -65,4 +65,48 @@ public class UserTest {
         User user2 = new User(2L, Username.of("testUserb"), Email.of("example2@org.com"));
         assertNotEquals(user1.hashCode(), user2.hashCode(), String.format("Hash codes should not be equal for users with different IDs: %d == %d", user1.hashCode(), user2.hashCode()));
     }
+
+    @Test
+    public void testChangeUsername() {
+        User user = new User(1L, testUsername, testEmail);
+        Username newUsername = new Username("newUser");
+        user.changeUsername(newUsername);
+        assertEquals(newUsername, user.getUsername(), String.format("Expected username to be changed to '%s', but was '%s'", newUsername, user.getUsername()));
+    }
+
+    @Test
+    public void testChangeUsernameToSameValue() {
+        User user = new User(1L, testUsername, testEmail);
+        assertThrows(IllegalArgumentException.class, () -> user.changeUsername(testUsername),
+                     "Changing username to the same value should throw IllegalArgumentException");
+    }
+
+    @Test
+    public void testChangeUsernameWithNull() {
+        User user = new User(1L, testUsername, testEmail);
+        assertThrows(NullPointerException.class, () -> user.changeUsername(null),
+                     "Changing username to null should throw NullPointerException");
+    }
+
+    @Test
+    public void testChangeEmail() {
+        User user = new User(1L, testUsername, testEmail);
+        Email newEmail = Email.of("example2@org.com");
+        user.changeEmail(newEmail);
+        assertEquals(newEmail, user.getEmail(), String.format("Expected email to be changed to '%s', but was '%s'", newEmail, user.getEmail()));
+    }
+
+    @Test
+    public void testChangeEmailToSameValue() {
+        User user = new User(1L, testUsername, testEmail);
+        assertThrows(IllegalArgumentException.class, () -> user.changeEmail(testEmail),
+                "Changing email to the same value should throw IllegalArgumentException");
+    }
+
+    @Test
+    public void testChangeEmailWithNull() {
+        User user = new User(1L, testUsername, testEmail);
+        assertThrows(NullPointerException.class, () -> user.changeEmail(null),
+                     "Changing email to null should throw NullPointerException");
+    }
 }
