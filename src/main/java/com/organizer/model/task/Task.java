@@ -51,10 +51,6 @@ public final class Task {
         return priority;
     }
 
-    public void setPriority(TaskPriority priority) {
-        this.priority = priority;
-    }
-
     public TaskStatus getStatus() {
         return status;
     }
@@ -75,6 +71,11 @@ public final class Task {
     public void changeTaskDescription(TaskDescription description) {
         Objects.requireNonNull(description, "Task description cannot be null");
         this.description = description;
+    }
+
+    public void changePriority(TaskPriority priority) {
+        Objects.requireNonNull(priority, "Task priority cannot be null");
+        this.priority = priority;
     }
 
     public void assignUser(User user) {
