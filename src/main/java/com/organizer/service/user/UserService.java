@@ -3,16 +3,16 @@ package com.organizer.service.user;
 import com.organizer.model.user.Email;
 import com.organizer.model.user.User;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class UserService {
 
     private static UserService instance;
-    private final Set<User> users;
+    private final Map<String, User> users;
 
     private UserService() {
-        this.users = new HashSet<>();
+        this.users = new HashMap<>();
     }
 
     public static UserService create() {
@@ -28,15 +28,15 @@ public final class UserService {
         }
         Email email = new Email(emailAddress);
         User user = new User(id, username, email);
-        users.add(user);
+        users.put(username, user);
         return user;
     }
 
-    public boolean isUserExists(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
+    public boolean isUserExists(String username) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
         }
-        return users.contains(user);
+        return users.containsKey(username);
     }
 
 }
