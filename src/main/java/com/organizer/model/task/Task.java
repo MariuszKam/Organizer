@@ -27,8 +27,11 @@ public final class Task {
 
     public Task(Long id, TaskName name, TaskDescription description, TaskPriority priority, TaskStatus status, User assignedUser) {
         this(id, name, description);
+        Objects.requireNonNull(priority, "Task priority cannot be null");
         this.priority = priority;
+        Objects.requireNonNull(status, "Task status cannot be null");
         this.status = status;
+        Objects.requireNonNull(assignedUser, "Assigned user cannot be null");
         this.assignedUser = assignedUser;
     }
 
