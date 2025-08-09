@@ -30,11 +30,13 @@ public final class User {
     }
 
     public void changeUsername(Username newUsername) {
+        Objects.requireNonNull(newUsername, "Username cannot be null");
         if (username.equals(newUsername)) throw new IllegalArgumentException("New username is the same");
         username = newUsername;
     }
 
     public void changeEmail(Email newEmail) {
+        Objects.requireNonNull(newEmail, "Email cannot be null");
         if (email.equals(newEmail)) throw new IllegalArgumentException("New email is the same");
         email = newEmail;
     }
