@@ -1,4 +1,4 @@
-package com.organizer.service;
+package com.organizer.service.task;
 
 import com.organizer.model.Project;
 import com.organizer.model.task.Task;
@@ -7,18 +7,17 @@ import com.organizer.model.task.TaskStatus;
 import com.organizer.model.user.User;
 
 import java.util.List;
-import java.util.Map;
 
 public class TaskCreationManager {
 
     private static TaskCreationManager instance;
-    private final Map<Project, List<Task>> taskByProject;
+    private final List<Project> projectList;
 
-    private TaskCreationManager(Map<Project, List<Task>> fetchedProjects) {
-        this.taskByProject = fetchedProjects;
+    private TaskCreationManager(List<Project> fetchedProjects) {
+        this.projectList = fetchedProjects;
     }
 
-    public static TaskCreationManager create(Map<Project, List<Task>> fetchedProjects) {
+    public static TaskCreationManager create(List<Project> fetchedProjects) {
         if (instance == null) {
             instance = new TaskCreationManager(fetchedProjects);
         }
@@ -30,16 +29,23 @@ public class TaskCreationManager {
         return new Task(taskId, name, description, priority, status, assignedUser);
     }
 
+    public Project addTaskToProject(Task task, Project project) {
+        if (project == null) {
+            throw new IllegalArgumentException("Project and Task cannot be null");
+        }
+        project.addTask(task);
+        return project;
+    }
+
     private Long generateTaskId() {
         Long maxId = 1L;
-        for (List<Task> value : taskByProject.values()) {
-            for (Task task : value) {
+        for (Project project : projectList) {
+            for (Task task : project.getTaskList()) {
                 if (task.getId() > maxId) {
                     maxId = task.getId();
                 }
             }
         }
-
         return maxId + 1;
     }
 }

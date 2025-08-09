@@ -1,7 +1,6 @@
-package com.organizer.service;
+package com.organizer.service.task;
 
 import com.organizer.model.Project;
-import com.organizer.model.task.Task;
 
 import java.util.HashMap;
 import java.util.List;
