@@ -38,7 +38,7 @@ public final class TaskCreationManager {
     }
 
     private Long generateTaskId() {
-        Long maxId = 1L;
+        Long maxId = 0L;
         for (Project project : projectList) {
             for (Task task : project.getTaskList()) {
                 if (task.getId() > maxId) {
