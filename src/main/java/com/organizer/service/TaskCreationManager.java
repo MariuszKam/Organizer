@@ -29,15 +29,6 @@ public class TaskCreationManager {
         return new Task(taskId, name, description, priority, status, assignedUser);
     }
 
-    public boolean addTaskToProject(Long projectId, String taskName, String taskDescription) {
-        for (Project project : projectList) {
-            if (project.getId().equals(projectId)) {
-                return project.addTask(taskName, taskDescription);
-            }
-        }
-        return false; // Project not found
-    }
-
     private Long generateTaskId() {
         Long maxId = 1L;
         for (Project project : projectList) {
