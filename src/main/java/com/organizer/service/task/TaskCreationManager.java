@@ -8,7 +8,7 @@ import com.organizer.model.user.User;
 
 import java.util.List;
 
-public class TaskCreationManager {
+public final class TaskCreationManager {
 
     private static TaskCreationManager instance;
     private final List<Project> projectList;
