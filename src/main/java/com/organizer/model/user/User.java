@@ -4,12 +4,16 @@ import java.util.Objects;
 
 public final class User {
 
-    private final Long id;
+    private final UserId id;
     private Username username;
     private Email email;
 
-    public User(Long id, Username username, Email email) {
-        Objects.requireNonNull(id, "ID cannot be null");
+    private User(Username username, Email email) {
+        this(UserId.newId(), username, email);
+    }
+
+    public User(UserId id, Username username, Email email) {
+        Objects.requireNonNull(id, "User ID cannot be null");
         this.id = id;
         Objects.requireNonNull(username, "Username cannot be null");
         this.username = username;
@@ -17,7 +21,7 @@ public final class User {
         this.email = email;
     }
 
-    public Long getId() {
+    public UserId getId() {
         return id;
     }
 

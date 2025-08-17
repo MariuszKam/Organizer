@@ -8,11 +8,15 @@ import java.util.Objects;
 
 public final class Project {
 
-    private final Long id;
+    private final ProjectId id;
     private ProjectName name;
     private final List<Task> taskList;
 
-    public Project(Long id, ProjectName name) {
+    public Project(ProjectName name) {
+        this(ProjectId.newId(), name);
+    }
+
+    public Project(ProjectId id, ProjectName name) {
         Objects.requireNonNull(id, "Project ID cannot be null");
         this.id = id;
         Objects.requireNonNull(name, "Project name cannot be null");
@@ -20,7 +24,7 @@ public final class Project {
         this.taskList = new ArrayList<>();
     }
 
-    public Long getId() {
+    public ProjectId getId() {
         return id;
     }
 

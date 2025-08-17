@@ -6,14 +6,18 @@ import java.util.Objects;
 
 public final class Task {
 
-    private final Long id;
+    private final TaskId id;
     private TaskName name;
     private TaskDescription description;
     private TaskPriority priority;
     private TaskStatus status;
     private User assignedUser;
 
-    public Task(Long id, TaskName name, TaskDescription description) {
+    public Task (TaskName name, TaskDescription description) {
+        this(TaskId.newId(), name, description);
+    }
+
+    public Task(TaskId id, TaskName name, TaskDescription description) {
         Objects.requireNonNull(id, "Task ID cannot be null");
         this.id = id;
         Objects.requireNonNull(name, "Task name cannot be null");
@@ -25,7 +29,11 @@ public final class Task {
         this.assignedUser = null;
     }
 
-    public Task(Long id, TaskName name, TaskDescription description, TaskPriority priority, TaskStatus status, User assignedUser) {
+    public Task(TaskName name, TaskDescription description, TaskPriority priority, TaskStatus status, User assignedUser) {
+        this(TaskId.newId(), name, description, priority, status, assignedUser);
+    }
+
+    public Task(TaskId id, TaskName name, TaskDescription description, TaskPriority priority, TaskStatus status, User assignedUser) {
         this(id, name, description);
         Objects.requireNonNull(priority, "Task priority cannot be null");
         this.priority = priority;
@@ -34,7 +42,7 @@ public final class Task {
         this.assignedUser = assignedUser;
     }
 
-    public Long getId() {
+    public TaskId getId() {
         return id;
     }
 
