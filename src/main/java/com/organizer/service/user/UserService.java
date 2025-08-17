@@ -2,6 +2,7 @@ package com.organizer.service.user;
 
 import com.organizer.model.user.Email;
 import com.organizer.model.user.User;
+import com.organizer.model.user.Username;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map;
 public final class UserService {
 
     private static UserService instance;
-    private final Map<String, User> users;
+    private final Map<Username, User> users;
 
     private UserService() {
         this.users = new HashMap<>();
@@ -22,7 +23,7 @@ public final class UserService {
         return instance;
     }
 
-    public User createUser(Long id, String username, String emailAddress) {
+    public User createUser(Long id, Username username, String emailAddress) {
         if (id == null || username == null || emailAddress == null) {
             throw new IllegalArgumentException("User ID, username, and email cannot be null");
         }

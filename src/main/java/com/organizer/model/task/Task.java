@@ -2,86 +2,98 @@ package com.organizer.model.task;
 
 import com.organizer.model.user.User;
 
-public class Task {
+import java.util.Objects;
 
-    private final Long id;
-    private String name;
-    private String description;
+public final class Task {
+
+    private final TaskId id;
+    private TaskName name;
+    private TaskDescription description;
     private TaskPriority priority;
     private TaskStatus status;
     private User assignedUser;
 
-    public Task(Long id, String name, String description) {
-        if (id == null) {
-            throw new IllegalArgumentException("Task ID cannot be null");
-        }
+    public Task (TaskName name, TaskDescription description) {
+        this(TaskId.newId(), name, description);
+    }
+
+    public Task(TaskId id, TaskName name, TaskDescription description) {
+        Objects.requireNonNull(id, "Task ID cannot be null");
         this.id = id;
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Task name cannot be null or empty");
-        }
+        Objects.requireNonNull(name, "Task name cannot be null");
         this.name = name;
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Task description cannot be null or empty");
-        }
+        Objects.requireNonNull(description, "Task description cannot be null");
         this.description = description;
         this.priority = TaskPriority.MEDIUM;
         this.status = TaskStatus.TODO;
         this.assignedUser = null;
     }
 
-    public Task(Long id, String name, String description, TaskPriority priority, TaskStatus status, User assignedUser) {
+    public Task(TaskName name, TaskDescription description, TaskPriority priority, TaskStatus status, User assignedUser) {
+        this(TaskId.newId(), name, description, priority, status, assignedUser);
+    }
+
+    public Task(TaskId id, TaskName name, TaskDescription description, TaskPriority priority, TaskStatus status, User assignedUser) {
         this(id, name, description);
+        Objects.requireNonNull(priority, "Task priority cannot be null");
         this.priority = priority;
+        Objects.requireNonNull(status, "Task status cannot be null");
         this.status = status;
         this.assignedUser = assignedUser;
     }
 
-    public Long getId() {
+    public TaskId getId() {
         return id;
     }
 
-    public String getName() {
+    public TaskName getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
+    public TaskDescription getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public TaskPriority getPriority() {
         return priority;
     }
 
-    public void setPriority(TaskPriority priority) {
-        this.priority = priority;
-    }
-
     public TaskStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(TaskStatus status) {
-        this.status = status;
     }
 
     public User getAssignedUser() {
         return assignedUser;
     }
 
-    public void setAssignedUser(User assignedUser) {
-        this.assignedUser = assignedUser;
+    public void changeTaskName(TaskName name) {
+        Objects.requireNonNull(name, "Task name cannot be null");
+        this.name = name;
+    }
+
+    public void changeTaskDescription(TaskDescription description) {
+        Objects.requireNonNull(description, "Task description cannot be null");
+        this.description = description;
+    }
+
+    public void changePriority(TaskPriority priority) {
+        Objects.requireNonNull(priority, "Task priority cannot be null");
+        this.priority = priority;
+    }
+
+    public void changeStatus(TaskStatus status) {
+        Objects.requireNonNull(status, "Task status cannot be null");
+        this.status = status;
+    }
+
+    public void assignUser(User user) {
+        Objects.requireNonNull(user, "Assigned user cannot be null");
+        this.assignedUser = user;
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Task task = (Task) o;
