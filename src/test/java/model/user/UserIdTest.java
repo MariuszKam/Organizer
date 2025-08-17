@@ -67,8 +67,8 @@ class UserIdTest {
     }
 
     @Nested
-    @DisplayName("Exception")
-    class ExceptionTests {
+    @DisplayName("Validation")
+    class ValidationTests {
 
         @Test
         @DisplayName("should throw exception for null UUID")
