@@ -1,6 +1,9 @@
 package model.task;
 
 import com.organizer.model.task.*;
+import com.organizer.model.user.Email;
+import com.organizer.model.user.User;
+import com.organizer.model.user.Username;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -166,6 +169,22 @@ public class TaskTest {
         Task task2 = new Task(2L, new TaskName("Task B"), new TaskDescription("Description B"));
 
         assertNotEquals(task1.hashCode(), task2.hashCode(), "Tasks with different IDs should have different hash codes");
+    }
+
+    @Test
+    public void testAssignUser() {
+        Task task = createTaskWithValidData();
+        User user = new User(1L, new Username("testuser"), new Email("example@org.com"));
+
+        task.assignUser(user);
+        assertEquals(user, task.getAssignedUser(), "Assigned user should match the user assigned to the task");
+    }
+
+    @Test
+    public void testAssignUserWithNull() {
+        Task task = createTaskWithValidData();
+        assertThrows(NullPointerException.class, () -> task.assignUser(null),
+                     "Expected IllegalArgumentException when assigning null user to task");
     }
 
     private Task createTaskWithValidData() {
