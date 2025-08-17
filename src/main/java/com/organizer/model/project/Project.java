@@ -34,7 +34,7 @@ public final class Project {
     }
 
     public List<Task> getTaskList() {
-        return taskList;
+        return List.copyOf(taskList);
     }
 
     public boolean addTask(Task task) {
