@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Username Value Object Tests")
 class UsernameTest {
 
-    private final String validUsername = "testuser"; // 8 chars, valid per domain
+    private static final String VALID_USERNAME = "testuser"; // 8 chars, valid per domain
 
     @Nested
     @DisplayName("Validation")
@@ -67,9 +67,9 @@ class UsernameTest {
         @Test
         @DisplayName("should create valid username")
         void shouldCreateValidUsername() {
-            Username validUser = Username.of(validUsername);
-            assertEquals(validUsername, validUser.username(),
-                    String.format("Expected username to be '%s'", validUsername));
+            Username validUser = Username.of(VALID_USERNAME);
+            assertEquals(VALID_USERNAME, validUser.username(),
+                    String.format("Expected username to be '%s'", VALID_USERNAME));
         }
     }
 
@@ -80,8 +80,8 @@ class UsernameTest {
         @Test
         @DisplayName("should be equal for same logical value")
         void shouldBeEqualForSameValue() {
-            Username u1 = Username.of(validUsername);
-            Username u2 = Username.of(validUsername);
+            Username u1 = Username.of(VALID_USERNAME);
+            Username u2 = Username.of(VALID_USERNAME);
             assertEquals(u1, u2, String.format(
                     "Expected usernames to be equal: '%s' and '%s'", u1.username(), u2.username()));
         }
@@ -89,7 +89,7 @@ class UsernameTest {
         @Test
         @DisplayName("should not be equal for different values")
         void shouldNotBeEqualForDifferentValues() {
-            Username u1 = Username.of(validUsername);
+            Username u1 = Username.of(VALID_USERNAME);
             Username u2 = Username.of("testuserb");
             assertNotEquals(u1, u2, String.format(
                     "Expected usernames to be different: '%s' and '%s'", u1.username(), u2.username()));
@@ -98,8 +98,8 @@ class UsernameTest {
         @Test
         @DisplayName("should have equal hashCodes for equal values")
         void shouldHaveEqualHashCodesForEqualValues() {
-            Username u1 = Username.of(validUsername);
-            Username u2 = Username.of(validUsername);
+            Username u1 = Username.of(VALID_USERNAME);
+            Username u2 = Username.of(VALID_USERNAME);
             assertEquals(u1.hashCode(), u2.hashCode(), String.format(
                     "Expected hash codes to be equal for usernames: '%s' and '%s'", u1.username(), u2.username()));
         }
@@ -107,7 +107,7 @@ class UsernameTest {
         @Test
         @DisplayName("should have different hashCodes for different values")
         void shouldHaveDifferentHashCodesForDifferentValues() {
-            Username u1 = Username.of(validUsername);
+            Username u1 = Username.of(VALID_USERNAME);
             Username u2 = Username.of("testuserb");
             assertNotEquals(u1.hashCode(), u2.hashCode(), String.format(
                     "Expected hash codes to be different for usernames: '%s' and '%s'", u1.username(), u2.username()));
