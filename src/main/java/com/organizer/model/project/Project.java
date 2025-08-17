@@ -61,7 +61,7 @@ public final class Project {
         return "Project{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", taskList=" + taskList +
+                ", tasks=" + taskList.size() +
                 '}';
     }
 }
