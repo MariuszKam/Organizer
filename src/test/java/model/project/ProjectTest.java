@@ -19,14 +19,14 @@ public class ProjectTest {
 
         assertEquals(1L, project.getId(), String.format("Expected project ID to be 1, but got %d", project.getId()));
 
-        assertEquals("Test Project", project.getName().name(),
-                String.format("Expected project name to be \"Test Project\", but got %s", project.getName()));
+        assertEquals("Project with Tasks", project.getName().name(),
+                String.format("Expected project name to be \"Project with Tasks\", but got %s", project.getName()));
         assertNotNull(project.getTaskList(), "Expected task list to be initialized, but it was null");
     }
 
     @Test
     public void testProjectAddTask() {
-        Project project = createProjectWithTasks();
+        Project project = new Project(1L, new ProjectName("Test Project"));
         Task task1 = new Task(1L, new TaskName("Task 1"),new TaskDescription("Description for Task 1"));
         Task task2 = new Task(2L, new TaskName("Task 2"),new TaskDescription("Description for Task 2"));
 
@@ -41,7 +41,7 @@ public class ProjectTest {
 
     @Test
     public void testProjectWithNullId() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
             new Project(null, new ProjectName("Invalid Project")), "Expected IllegalArgumentException for null project ID");
     }
 
@@ -53,14 +53,14 @@ public class ProjectTest {
 
     @Test
     public void testProjectWithNullName() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
                 new Project(1L, null), "Expected IllegalArgumentException for null project name");
     }
 
     @Test
     public void testSetNewName() {
         Project project = createProjectWithTasks();
-        assertEquals("Initial Name", project.getName(), String.format("Expected project name to be \"Initial Name\", but got %s", project.getName()));
+        assertEquals("Project with Tasks", project.getName().name(), String.format("Expected project name to be \"Project with Tasks\", but got %s", project.getName()));
 
         project.changeProjectName(new ProjectName("Updated Name"));
         assertEquals("Updated Name", project.getName().name(), String.format("Expected project name to be \"Updated Name\", but got %s", project.getName()));

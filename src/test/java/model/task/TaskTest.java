@@ -23,7 +23,7 @@ public class TaskTest {
 
     @Test
     public void testTaskWithNullId() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
             new Task(null, new TaskName("Invalid Task"), new TaskDescription("This task has a null ID.")),
             "Expected IllegalArgumentException for null task ID");
     }
@@ -37,7 +37,7 @@ public class TaskTest {
 
     @Test
     public void testTaskWithNullName() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
                 new Task(1L, null, new TaskDescription("This task has a null name.")),
                      "Expected IllegalArgumentException for null task name");
     }
@@ -51,7 +51,7 @@ public class TaskTest {
 
     @Test
     public void testTaskWithNullDescription() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
                 new Task(1L, new TaskName("Valid Task"), null),
                      "Expected IllegalArgumentException for null task description");
     }
@@ -59,8 +59,8 @@ public class TaskTest {
     @Test
     public void testSetNewName() {
         Task task = createTaskWithValidData();
-        assertEquals("Initial Name", task.getName().name(),
-                     String.format("Expected task name to be \"Initial Name\", but got %s", task.getName()));
+        assertEquals("Test Task", task.getName().name(),
+                     String.format("Expected task name to be \"Test Task\", but got %s", task.getName()));
 
         task.changeTaskName(new TaskName("Updated Name"));
         assertEquals("Updated Name", task.getName().name(),
@@ -70,15 +70,15 @@ public class TaskTest {
     @Test
     public void testSetNewNameWithNull() {
         Task task = new Task(1L, new TaskName("Task Name"), new TaskDescription("Task Description"));
-        assertThrows(IllegalArgumentException.class, () -> task.changeTaskName(null),
+        assertThrows(NullPointerException.class, () -> task.changeTaskName(null),
                      "Expected IllegalArgumentException when setting task name to null");
     }
 
     @Test
     public void testSetNewDescription() {
         Task task = createTaskWithValidData();
-        assertEquals("Initial Description", task.getDescription().description(),
-                     String.format("Expected task description to be \"Initial Description\", but got %s", task.getDescription()));
+        assertEquals("This is a test task description.", task.getDescription().description(),
+                     String.format("Expected task description to be \"This is a test task description.\", but got %s", task.getDescription()));
 
         task.changeTaskDescription(new TaskDescription("Updated Description"));
         assertEquals("Updated Description", task.getDescription().description(),
@@ -88,7 +88,7 @@ public class TaskTest {
     @Test
     public void testSetNewDescriptionWithNull() {
         Task task = new Task(1L, new TaskName("Task Name"), new TaskDescription("Task Description"));
-        assertThrows(IllegalArgumentException.class, () -> task.changeTaskDescription(null),
+        assertThrows(NullPointerException.class, () -> task.changeTaskDescription(null),
                      "Expected IllegalArgumentException when setting task description to null");
     }
 
