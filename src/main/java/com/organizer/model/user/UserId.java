@@ -20,7 +20,7 @@ public record UserId(UUID value) {
 
     public static UserId of(String string) {
         Objects.requireNonNull(string, "User ID string cannot be null");
-        UUID uuid = UUID.fromString(string);
+        UUID uuid = UUID.fromString(string.strip());
         return new UserId(uuid);
     }
 

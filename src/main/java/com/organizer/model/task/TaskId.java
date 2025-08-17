@@ -20,7 +20,7 @@ public record TaskId(UUID value) {
 
     public static TaskId of(String string) {
         Objects.requireNonNull(string, "Task ID string cannot be null");
-        UUID uuid = UUID.fromString(string);
+        UUID uuid = UUID.fromString(string.strip());
         return new TaskId(uuid);
     }
 

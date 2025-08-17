@@ -20,7 +20,7 @@ public record ProjectId(UUID value) {
 
     public static ProjectId of(String string) {
         Objects.requireNonNull(string, "Project ID string cannot be null");
-        UUID uuid = UUID.fromString(string);
+        UUID uuid = UUID.fromString(string.strip());
         return new ProjectId(uuid);
     }
 
