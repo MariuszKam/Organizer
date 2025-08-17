@@ -10,7 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Email Value Object Tests")
 class EmailTest {
 
-    private final String emailAddress = "example@org.com";
+    private static final String VALID_EMAIL = "example@org.com";
+
+    private static final String OTHER_EMAIL = "example2@org.com";
 
     @Nested
     @DisplayName("Validation")
@@ -60,9 +62,9 @@ class EmailTest {
         @Test
         @DisplayName("should create valid email")
         void shouldCreateValidEmail() {
-            Email validEmail = new Email(emailAddress);
-            assertEquals(emailAddress, validEmail.emailAddress(),
-                    String.format("Expected email address to be '%s'", emailAddress));
+            Email validEmail = new Email(VALID_EMAIL);
+            assertEquals(VALID_EMAIL, validEmail.emailAddress(),
+                    String.format("Expected email address to be '%s'", VALID_EMAIL));
         }
     }
 
@@ -73,8 +75,8 @@ class EmailTest {
         @Test
         @DisplayName("should be equal for same email values")
         void shouldBeEqualForSameEmail() {
-            Email email1 = new Email(emailAddress);
-            Email email2 = new Email(emailAddress);
+            Email email1 = new Email(VALID_EMAIL);
+            Email email2 = new Email(VALID_EMAIL);
             assertEquals(email1, email2,
                     String.format("Expected emails to be equal: '%s' and '%s'",
                             email1.emailAddress(), email2.emailAddress()));
@@ -83,8 +85,8 @@ class EmailTest {
         @Test
         @DisplayName("should not be equal for different email values")
         void shouldNotBeEqualForDifferentEmails() {
-            Email email1 = new Email(emailAddress);
-            Email email2 = new Email("example2@org.com");
+            Email email1 = new Email(VALID_EMAIL);
+            Email email2 = new Email(OTHER_EMAIL);
             assertNotEquals(email1, email2,
                     String.format("Expected emails to be different: '%s' and '%s'",
                             email1.emailAddress(), email2.emailAddress()));
@@ -93,8 +95,8 @@ class EmailTest {
         @Test
         @DisplayName("should have equal hashCodes for equal emails")
         void shouldHaveEqualHashCodes() {
-            Email email1 = new Email(emailAddress);
-            Email email2 = new Email(emailAddress);
+            Email email1 = new Email(VALID_EMAIL);
+            Email email2 = new Email(VALID_EMAIL);
             assertEquals(email1.hashCode(), email2.hashCode(),
                     String.format("Expected hash codes to be equal for emails: '%s' and '%s'",
                             email1.emailAddress(), email2.emailAddress()));
@@ -103,8 +105,8 @@ class EmailTest {
         @Test
         @DisplayName("should have different hashCodes for different emails")
         void shouldHaveDifferentHashCodes() {
-            Email email1 = new Email(emailAddress);
-            Email email2 = new Email("example2@org.com");
+            Email email1 = new Email(VALID_EMAIL);
+            Email email2 = new Email(OTHER_EMAIL);
             assertNotEquals(email1.hashCode(), email2.hashCode(),
                     String.format("Expected hash codes to be different for emails: '%s' and '%s'",
                             email1.emailAddress(), email2.emailAddress()));
@@ -118,7 +120,7 @@ class EmailTest {
         @Test
         @DisplayName("should mask email address in toString()")
         void shouldMaskEmail() {
-            Email email = new Email(emailAddress);
+            Email email = new Email(VALID_EMAIL);
             String maskedEmail = email.toString();
             assertTrue(maskedEmail.startsWith("e***@"),
                     String.format("Expected masked email to start with 'e***@', but was '%s'", maskedEmail));
