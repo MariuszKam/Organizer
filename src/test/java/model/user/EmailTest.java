@@ -52,7 +52,7 @@ class EmailTest {
         @Test
         @DisplayName("should lowercase email address")
         void shouldLowercaseEmail() {
-            Email email = Email.of("ABC@ORG.COM");
+            Email email = new Email("ABC@ORG.COM");
             assertEquals("abc@org.com", email.emailAddress(),
                     String.format("Expected email address to be lowercased: '%s'", email.emailAddress()));
         }
