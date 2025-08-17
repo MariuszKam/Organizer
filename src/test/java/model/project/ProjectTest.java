@@ -1,6 +1,6 @@
-package model;
+package model.project;
 
-import com.organizer.model.Project;
+import com.organizer.model.project.Project;
 import com.organizer.model.task.Task;
 import org.junit.jupiter.api.Test;
 
