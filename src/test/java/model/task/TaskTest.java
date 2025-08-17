@@ -28,7 +28,7 @@ public class TaskTest {
     public void testTaskWithNullId() {
         assertThrows(NullPointerException.class, () ->
             new Task(null, new TaskName("Invalid Task"), new TaskDescription("This task has a null ID.")),
-            "Expected IllegalArgumentException for null task ID");
+            "Expected NullPointerException for null task ID");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class TaskTest {
     public void testTaskWithNullName() {
         assertThrows(NullPointerException.class, () ->
                 new Task(1L, null, new TaskDescription("This task has a null name.")),
-                     "Expected IllegalArgumentException for null task name");
+                     "Expected NullPointerException for null task name");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TaskTest {
     public void testTaskWithNullDescription() {
         assertThrows(NullPointerException.class, () ->
                 new Task(1L, new TaskName("Valid Task"), null),
-                     "Expected IllegalArgumentException for null task description");
+                     "Expected NullPointerException for null task description");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class TaskTest {
     public void testSetNewNameWithNull() {
         Task task = new Task(1L, new TaskName("Task Name"), new TaskDescription("Task Description"));
         assertThrows(NullPointerException.class, () -> task.changeTaskName(null),
-                     "Expected IllegalArgumentException when setting task name to null");
+                     "Expected NullPointerException when setting task name to null");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class TaskTest {
     public void testSetNewDescriptionWithNull() {
         Task task = new Task(1L, new TaskName("Task Name"), new TaskDescription("Task Description"));
         assertThrows(NullPointerException.class, () -> task.changeTaskDescription(null),
-                     "Expected IllegalArgumentException when setting task description to null");
+                     "Expected NullPointerException when setting task description to null");
     }
 
     @Test
@@ -184,7 +184,7 @@ public class TaskTest {
     public void testAssignUserWithNull() {
         Task task = createTaskWithValidData();
         assertThrows(NullPointerException.class, () -> task.assignUser(null),
-                     "Expected IllegalArgumentException when assigning null user to task");
+                     "Expected NullPointerException when assigning null user to task");
     }
 
     private Task createTaskWithValidData() {

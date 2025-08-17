@@ -29,13 +29,13 @@ public class UserTest {
     @Test
     public void testUserWithNullUsername() {
         assertThrows(NullPointerException.class, () -> new User(1L, null, testEmail),
-                     "User creation should throw IllegalArgumentException when username is null");
+                     "User creation should throw NullPointerException when username is null");
     }
 
     @Test
     public void testUserWithNullEmail() {
         assertThrows(NullPointerException.class, () -> new User(1L, testUsername, null),
-                     "User creation should throw IllegalArgumentException when email is null");
+                     "User creation should throw NullPointerException when email is null");
     }
 
     @Test

@@ -42,7 +42,7 @@ public class ProjectTest {
     @Test
     public void testProjectWithNullId() {
         assertThrows(NullPointerException.class, () ->
-            new Project(null, new ProjectName("Invalid Project")), "Expected IllegalArgumentException for null project ID");
+            new Project(null, new ProjectName("Invalid Project")), "Expected NullPointerException for null project ID");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ProjectTest {
     @Test
     public void testProjectWithNullName() {
         assertThrows(NullPointerException.class, () ->
-                new Project(1L, null), "Expected IllegalArgumentException for null project name");
+                new Project(1L, null), "Expected NullPointerException for null project name");
     }
 
     @Test
