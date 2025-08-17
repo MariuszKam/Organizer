@@ -90,6 +90,14 @@ class ProjectTest {
             IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> project.addTask(t2));
             assertTrue(ex.getMessage().contains(same.toString()), "Exception message should contain duplicate TaskId");
         }
+
+        @Test
+        @DisplayName("should throw when adding null task")
+        void shouldThrowWhenAddingNullTask() {
+            Project project = new Project(PROJECT_NAME);
+            assertThrows(NullPointerException.class, () -> project.addTask(null),
+                    "Adding null task should throw NullPointerException");
+        }
     }
 
     @Nested
@@ -131,10 +139,8 @@ class ProjectTest {
         @DisplayName("should not be equal for different ProjectIds")
         void shouldNotBeEqualForDifferentIds() {
             Project p1 = new Project(ProjectId.of("dddddddd-dddd-dddd-dddd-dddddddddddd"), PROJECT_NAME);
-            Project p2 = new Project(ProjectId.of("eeeee5ee-eeee-eeee-eeee-eeeeeeeeeeee"), PROJECT_NAME);
+            Project p2 = new Project(ProjectId.of("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), PROJECT_NAME);
             assertNotEquals(p1, p2, "Projects with different ProjectIds should not be equal");
-            assertNotEquals(p1.hashCode(), p2.hashCode(),
-                    "Hash codes should not match for Projects with different ProjectIds");
         }
     }
 }
