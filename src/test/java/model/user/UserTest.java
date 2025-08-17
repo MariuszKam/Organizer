@@ -2,111 +2,147 @@ package model.user;
 
 import com.organizer.model.user.Email;
 import com.organizer.model.user.User;
+import com.organizer.model.user.UserId;
 import com.organizer.model.user.Username;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserTest {
+@DisplayName("User Aggregate Tests")
+class UserTest {
 
-    private final Username testUsername = new Username("testUser");
-    private final Email testEmail = new Email("example@org.com");
+    private static final Username TEST_USER = new Username("testUser");
+    private static final Email TEST_EMAIL = new Email("example@org.com");
 
-    @Test
-    public void testUserCreation() {
-        User user = new User(1L, testUsername, testEmail);
-        assertEquals(1L, user.getId(), String.format("User ID should be 1, but was %d", user.getId()));
-        assertEquals(testUsername, user.getUsername(), String.format("Username should be %s, but was '%s'",testUsername, user.getUsername()));
-        assertEquals(testEmail, user.getEmail(), String.format("Email should be '%s', but was '%s'", testEmail, user.getEmail()));
+    @Nested
+    @DisplayName("Creation")
+    class CreationTests {
+
+        @Test
+        @DisplayName("should create user with generated UUID (non-null id)")
+        void shouldCreateUserWithGeneratedId() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            assertNotNull(user.getId(), "User ID should be generated (non-null)");
+            assertEquals(TEST_USER, user.getUsername(), "Username should match");
+            assertEquals(TEST_EMAIL, user.getEmail(), "Email should match");
+        }
+
+        @Test
+        @DisplayName("should create user with explicit UserId")
+        void shouldCreateUserWithExplicitId() {
+            UserId id = UserId.of("550e8400-e29b-41d4-a716-446655440000");
+            User user = new User(id, TEST_USER, TEST_EMAIL);
+            assertEquals(id, user.getId(), "User ID should match the explicit value");
+        }
+
+        @Test
+        @DisplayName("should throw when id is null")
+        void shouldThrowWhenIdIsNull() {
+            assertThrows(NullPointerException.class, () -> new User(null, TEST_USER, TEST_EMAIL),
+                    "User creation should throw NullPointerException when ID is null");
+        }
+
+        @Test
+        @DisplayName("should throw when username is null")
+        void shouldThrowWhenUsernameIsNull() {
+            UserId id = UserId.newId();
+            assertThrows(NullPointerException.class, () -> new User(id, null, TEST_EMAIL),
+                    "User creation should throw NullPointerException when username is null");
+        }
+
+        @Test
+        @DisplayName("should throw when email is null")
+        void shouldThrowWhenEmailIsNull() {
+            UserId id = UserId.newId();
+            assertThrows(NullPointerException.class, () -> new User(id, TEST_USER, null),
+                    "User creation should throw NullPointerException when email is null");
+        }
     }
 
-    @Test
-    public void testUserWithNullId() {
-        assertThrows(NullPointerException.class, () -> new User(null, testUsername, testEmail),
-                "User creation should throw NullPointerException when ID is null");
+    @Nested
+    @DisplayName("Equality & HashCode")
+    class EqualityAndHashCodeTests {
+
+        @Test
+        @DisplayName("should be equal for users with the same UserId")
+        void shouldBeEqualForSameId() {
+            UserId sameId = UserId.of("11111111-1111-1111-1111-111111111111");
+            User user1 = new User(sameId, TEST_USER, TEST_EMAIL);
+            User user2 = new User(sameId, TEST_USER, TEST_EMAIL);
+            assertEquals(user1, user2, "Users with the same ID should be equal");
+            assertEquals(user1.hashCode(), user2.hashCode(), "Hash codes should be equal for the same ID");
+        }
+
+        @Test
+        @DisplayName("should not be equal for users with different UserIds")
+        void shouldNotBeEqualForDifferentIds() {
+            User user1 = new User(UserId.of("22222222-2222-2222-2222-222222222222"), TEST_USER, TEST_EMAIL);
+            User user2 = new User(UserId.of("33333333-3333-3333-3333-333333333333"),
+                    Username.of("testUserb"), Email.of("example2@org.com"));
+            assertNotEquals(user1, user2, "Users with different IDs should not be equal");
+            assertNotEquals(user1.hashCode(), user2.hashCode(), "Hash codes should differ for different IDs");
+        }
     }
 
-    @Test
-    public void testUserWithNullUsername() {
-        assertThrows(NullPointerException.class, () -> new User(1L, null, testEmail),
-                     "User creation should throw NullPointerException when username is null");
+    @Nested
+    @DisplayName("Change Username")
+    class ChangeUsernameTests {
+
+        @Test
+        @DisplayName("should change username to a new value")
+        void shouldChangeUsername() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            Username newUsername = new Username("newUser"); // znormalizuje do "newuser"
+            user.changeUsername(newUsername);
+            assertEquals(newUsername, user.getUsername(), "Username should be updated");
+        }
+
+        @Test
+        @DisplayName("should throw when changing username to the same value")
+        void shouldThrowWhenChangingToSameUsername() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            assertThrows(IllegalArgumentException.class, () -> user.changeUsername(TEST_USER),
+                    "Changing username to the same value should throw IllegalArgumentException");
+        }
+
+        @Test
+        @DisplayName("should throw when changing username to null")
+        void shouldThrowWhenChangingUsernameToNull() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            assertThrows(NullPointerException.class, () -> user.changeUsername(null),
+                    "Changing username to null should throw NullPointerException");
+        }
     }
 
-    @Test
-    public void testUserWithNullEmail() {
-        assertThrows(NullPointerException.class, () -> new User(1L, testUsername, null),
-                     "User creation should throw NullPointerException when email is null");
-    }
+    @Nested
+    @DisplayName("Change Email")
+    class ChangeEmailTests {
 
-    @Test
-    public void testUserEquality() {
-        User user1 = new User(1L, testUsername, testEmail);
-        User user2 = new User(1L, testUsername, testEmail);
-        assertEquals(user1, user2, String.format("Users with the same ID should be equal, but they are not: %s != %s", user1, user2));
-    }
+        @Test
+        @DisplayName("should change email to a new value")
+        void shouldChangeEmail() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            Email newEmail = Email.of("example2@org.com");
+            user.changeEmail(newEmail);
+            assertEquals(newEmail, user.getEmail(), "Email should be updated");
+        }
 
-    @Test
-    public void testUserInequality() {
-        User user1 = new User(1L, testUsername, testEmail);
-        User user2 = new User(2L, Username.of("testUserb"), Email.of("example2@org.com"));
-        assertNotEquals(user1, user2, String.format("Users with different IDs should not be equal: %s == %s", user1, user2));
-    }
+        @Test
+        @DisplayName("should throw when changing email to the same value")
+        void shouldThrowWhenChangingToSameEmail() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            assertThrows(IllegalArgumentException.class, () -> user.changeEmail(TEST_EMAIL),
+                    "Changing email to the same value should throw IllegalArgumentException");
+        }
 
-    @Test
-    public void testUserHashCode() {
-        User user1 = new User(1L, testUsername, testEmail);
-        User user2 = new User(1L, testUsername, testEmail);
-        assertEquals(user1.hashCode(), user2.hashCode(), String.format("Hash codes should be equal for users with the same ID: %d != %d", user1.hashCode(), user2.hashCode()));
-    }
-
-    @Test
-    public void testUserHashCodeInequality() {
-        User user1 = new User(1L, testUsername, testEmail);
-        User user2 = new User(2L, Username.of("testUserb"), Email.of("example2@org.com"));
-        assertNotEquals(user1.hashCode(), user2.hashCode(), String.format("Hash codes should not be equal for users with different IDs: %d == %d", user1.hashCode(), user2.hashCode()));
-    }
-
-    @Test
-    public void testChangeUsername() {
-        User user = new User(1L, testUsername, testEmail);
-        Username newUsername = new Username("newUser");
-        user.changeUsername(newUsername);
-        assertEquals(newUsername, user.getUsername(), String.format("Expected username to be changed to '%s', but was '%s'", newUsername, user.getUsername()));
-    }
-
-    @Test
-    public void testChangeUsernameToSameValue() {
-        User user = new User(1L, testUsername, testEmail);
-        assertThrows(IllegalArgumentException.class, () -> user.changeUsername(testUsername),
-                     "Changing username to the same value should throw IllegalArgumentException");
-    }
-
-    @Test
-    public void testChangeUsernameWithNull() {
-        User user = new User(1L, testUsername, testEmail);
-        assertThrows(NullPointerException.class, () -> user.changeUsername(null),
-                     "Changing username to null should throw NullPointerException");
-    }
-
-    @Test
-    public void testChangeEmail() {
-        User user = new User(1L, testUsername, testEmail);
-        Email newEmail = Email.of("example2@org.com");
-        user.changeEmail(newEmail);
-        assertEquals(newEmail, user.getEmail(), String.format("Expected email to be changed to '%s', but was '%s'", newEmail, user.getEmail()));
-    }
-
-    @Test
-    public void testChangeEmailToSameValue() {
-        User user = new User(1L, testUsername, testEmail);
-        assertThrows(IllegalArgumentException.class, () -> user.changeEmail(testEmail),
-                "Changing email to the same value should throw IllegalArgumentException");
-    }
-
-    @Test
-    public void testChangeEmailWithNull() {
-        User user = new User(1L, testUsername, testEmail);
-        assertThrows(NullPointerException.class, () -> user.changeEmail(null),
-                     "Changing email to null should throw NullPointerException");
+        @Test
+        @DisplayName("should throw when changing email to null")
+        void shouldThrowWhenChangingEmailToNull() {
+            User user = new User(TEST_USER, TEST_EMAIL);
+            assertThrows(NullPointerException.class, () -> user.changeEmail(null),
+                    "Changing email to null should throw NullPointerException");
+        }
     }
 }
