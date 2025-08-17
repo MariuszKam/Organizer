@@ -8,7 +8,7 @@ public final class User {
     private Username username;
     private Email email;
 
-    private User(Username username, Email email) {
+    public User(Username username, Email email) {
         this(UserId.newId(), username, email);
     }
 
