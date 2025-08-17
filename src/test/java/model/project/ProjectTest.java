@@ -1,108 +1,146 @@
 package model.project;
 
 import com.organizer.model.project.Project;
+import com.organizer.model.project.ProjectId;
 import com.organizer.model.project.ProjectName;
-import com.organizer.model.task.Task;
-import com.organizer.model.task.TaskDescription;
-import com.organizer.model.task.TaskName;
+import com.organizer.model.task.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProjectTest {
+@DisplayName("Project Aggregate Tests")
+class ProjectTest {
 
-    @Test
-    public void testProjectCreation() {
-        Project project = createProjectWithTasks();
+    private static final ProjectName PROJECT_NAME = ProjectName.of("Project with Tasks");
+    private static final TaskName T1_NAME = TaskName.of("Task 1");
+    private static final TaskName T2_NAME = TaskName.of("Task 2");
+    private static final TaskDescription T1_DESC = TaskDescription.of("Description for Task 1");
+    private static final TaskDescription T2_DESC = TaskDescription.of("Description for Task 2");
 
-        assertEquals(1L, project.getId(), String.format("Expected project ID to be 1, but got %d", project.getId()));
+    @Nested
+    @DisplayName("Creation")
+    class CreationTests {
 
-        assertEquals("Project with Tasks", project.getName().name(),
-                String.format("Expected project name to be \"Project with Tasks\", but got %s", project.getName()));
-        assertNotNull(project.getTaskList(), "Expected task list to be initialized, but it was null");
+        @Test
+        @DisplayName("should create project with generated ProjectId")
+        void shouldCreateProjectWithGeneratedId() {
+            Project project = new Project(PROJECT_NAME);
+            assertNotNull(project.getId(), "Project ID should be generated");
+            assertEquals("Project with Tasks", project.getName().name(),
+                    "Project name should match the provided name");
+            assertNotNull(project.getTaskList(), "Task list should be initialized");
+            assertTrue(project.getTaskList().isEmpty(), "Task list should be empty on creation");
+        }
+
+        @Test
+        @DisplayName("should create project with explicit ProjectId")
+        void shouldCreateProjectWithExplicitId() {
+            ProjectId id = ProjectId.of("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+            Project project = new Project(id, PROJECT_NAME);
+            assertEquals(id, project.getId(), "Project ID should match explicit value");
+        }
+
+        @Test
+        @DisplayName("should throw when id or name is null")
+        void shouldThrowOnNulls() {
+            assertThrows(NullPointerException.class, () -> new Project(null, PROJECT_NAME),
+                    "Project creation should throw NullPointerException when ProjectId is null");
+            assertThrows(NullPointerException.class, () -> new Project(ProjectId.newId(), null),
+                    "Project creation should throw NullPointerException when ProjectName is null");
+        }
     }
 
-    @Test
-    public void testProjectAddTask() {
-        Project project = new Project(1L, new ProjectName("Test Project"));
-        Task task1 = new Task(1L, new TaskName("Task 1"),new TaskDescription("Description for Task 1"));
-        Task task2 = new Task(2L, new TaskName("Task 2"),new TaskDescription("Description for Task 2"));
+    @Nested
+    @DisplayName("Tasks Management")
+    class TasksManagementTests {
 
-        project.addTask(task1);
-        project.addTask(task2);
+        @Test
+        @DisplayName("should add tasks and expose unmodifiable task list")
+        void shouldAddTasksAndExposeUnmodifiableList() {
+            Project project = new Project(PROJECT_NAME);
+            Task t1 = new Task(T1_NAME, T1_DESC);
+            Task t2 = new Task(T2_NAME, T2_DESC);
 
-        List<Task> tasks = project.getTaskList();
-        assertEquals(2, tasks.size(), String.format("Expected task list size to be 2, but got %d", tasks.size()));
-        assertEquals(1L, tasks.get(0).getId(), String.format("Expected first task ID to be 1, but got %d", tasks.get(0).getId()));
-        assertEquals(2L, tasks.get(1).getId(), String.format("Expected second task ID to be 2, but got %d", tasks.get(1).getId()));
+            project.addTask(t1);
+            project.addTask(t2);
+
+            List<Task> tasks = project.getTaskList();
+            assertEquals(2, tasks.size(), "Task list should contain 2 tasks after adding");
+            assertEquals(t1.getId(), tasks.get(0).getId(), "First task ID should match Task 1 ID");
+            assertEquals(t2.getId(), tasks.get(1).getId(), "Second task ID should match Task 2 ID");
+
+            assertThrows(UnsupportedOperationException.class, () ->
+                            tasks.add(new Task(TaskName.of("X"), TaskDescription.of("Y"))),
+                    "Task list should be unmodifiable");
+        }
+
+        @Test
+        @DisplayName("should throw when adding duplicate TaskId to project")
+        void shouldThrowOnDuplicateTask() {
+            Project project = new Project(PROJECT_NAME);
+            TaskId same = TaskId.of("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+            Task t1 = new Task(same, T1_NAME, T1_DESC);
+            Task t2 = new Task(same, T2_NAME, T2_DESC);
+
+            project.addTask(t1);
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> project.addTask(t2));
+            assertTrue(ex.getMessage().contains(same.toString()), "Exception message should contain duplicate TaskId");
+        }
+
+        @Test
+        @DisplayName("should throw when adding null task")
+        void shouldThrowWhenAddingNullTask() {
+            Project project = new Project(PROJECT_NAME);
+            assertThrows(NullPointerException.class, () -> project.addTask(null),
+                    "Adding null task should throw NullPointerException");
+        }
     }
 
-    @Test
-    public void testProjectWithNullId() {
-        assertThrows(NullPointerException.class, () ->
-            new Project(null, new ProjectName("Invalid Project")), "Expected NullPointerException for null project ID");
+    @Nested
+    @DisplayName("Rename")
+    class RenameTests {
+
+        @Test
+        @DisplayName("should change project name")
+        void shouldChangeProjectName() {
+            Project project = new Project(PROJECT_NAME);
+            project.changeProjectName(ProjectName.of("Updated Name"));
+            assertEquals("Updated Name", project.getName().name(), "Project name should be updated");
+        }
+
+        @Test
+        @DisplayName("should throw when new name is null")
+        void shouldThrowWhenNameNull() {
+            Project project = new Project(PROJECT_NAME);
+            assertThrows(NullPointerException.class, () -> project.changeProjectName(null),
+                    "ChangeProjectName should throw NullPointerException when new name is null");
+        }
     }
 
-    @Test
-    public void testProjectWithEmptyName() {
-        assertThrows(IllegalArgumentException.class, () ->
-            new Project(1L,new ProjectName("")), "Expected IllegalArgumentException for empty project name");
+    @Nested
+    @DisplayName("Equality & HashCode")
+    class EqualityAndHashCodeTests {
+
+        @Test
+        @DisplayName("should be equal for the same ProjectId")
+        void shouldBeEqualForSameId() {
+            ProjectId same = ProjectId.of("cccccccc-cccc-cccc-cccc-cccccccccccc");
+            Project p1 = new Project(same, PROJECT_NAME);
+            Project p2 = new Project(same, ProjectName.of("Another Name"));
+            assertEquals(p1, p2, "Projects with same ProjectId should be equal");
+            assertEquals(p1.hashCode(), p2.hashCode(), "Hash codes should match for equal Project objects");
+        }
+
+        @Test
+        @DisplayName("should not be equal for different ProjectIds")
+        void shouldNotBeEqualForDifferentIds() {
+            Project p1 = new Project(ProjectId.of("dddddddd-dddd-dddd-dddd-dddddddddddd"), PROJECT_NAME);
+            Project p2 = new Project(ProjectId.of("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), PROJECT_NAME);
+            assertNotEquals(p1, p2, "Projects with different ProjectIds should not be equal");
+        }
     }
-
-    @Test
-    public void testProjectWithNullName() {
-        assertThrows(NullPointerException.class, () ->
-                new Project(1L, null), "Expected NullPointerException for null project name");
-    }
-
-    @Test
-    public void testSetNewName() {
-        Project project = createProjectWithTasks();
-        assertEquals("Project with Tasks", project.getName().name(), String.format("Expected project name to be \"Project with Tasks\", but got %s", project.getName()));
-
-        project.changeProjectName(new ProjectName("Updated Name"));
-        assertEquals("Updated Name", project.getName().name(), String.format("Expected project name to be \"Updated Name\", but got %s", project.getName()));
-    }
-
-    @Test
-    public void testProjectIsEqual() {
-        Project project1 = new Project(1L, new ProjectName("Project A"));
-        Project project2 = new Project(1L, new ProjectName("Project B"));
-
-        assertEquals(project1, project2, "Projects with the same ID should be equal");
-    }
-
-    @Test
-    public void testProjectIsNotEqual() {
-        Project project1 = new Project(1L, new ProjectName("Project A"));
-        Project project2 = new Project(2L, new ProjectName("Project B"));
-
-        assertNotEquals(project1, project2, "Projects with different IDs should not be equal");
-    }
-
-    @Test
-    public void testHashCodeEqual() {
-        Project project1 = new Project(1L, new ProjectName("Project A"));
-        Project project2 = new Project(1L, new ProjectName("Project B"));
-
-        assertEquals(project1.hashCode(), project2.hashCode(), "Projects with the same ID should have the same hash code");
-    }
-
-    @Test
-    public void testHashCodeNotEqual() {
-        Project project1 = new Project(1L, new ProjectName("Project A"));
-        Project project2 = new Project(2L, new ProjectName("Project B"));
-
-        assertNotEquals(project1.hashCode(), project2.hashCode(), "Projects with different IDs should have different hash codes");
-    }
-
-    private Project createProjectWithTasks() {
-        Project project = new Project(1L, new ProjectName("Project with Tasks"));
-        project.addTask(new Task(1L, new TaskName("Task 1"), new TaskDescription("Description for Task 1")));
-        project.addTask(new Task(2L, new TaskName("Task 2"), new TaskDescription("Description for Task 2")));
-        return project;
-    }
-
 }
