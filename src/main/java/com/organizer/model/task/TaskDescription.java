@@ -9,7 +9,9 @@ public record TaskDescription(String description) {
 
     public TaskDescription {
         Objects.requireNonNull(description, "Task description cannot be null");
-        if (!PATTERN.matcher(description).matches()) throw new IllegalArgumentException("Invalid task description! Description must be between 1 and 500 characters.");
+        if (!PATTERN.matcher(description).matches()) {
+            throw new IllegalArgumentException("Invalid task description! Description must be between 1 and 500 characters.");
+        }
     }
 
     public static TaskDescription of(String description) {

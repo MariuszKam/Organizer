@@ -11,7 +11,9 @@ public record Email(String emailAddress) {
     public Email {
         Objects.requireNonNull(emailAddress, "Email cannot be null");
         var email = emailAddress.strip().toLowerCase(Locale.ROOT);
-        if (!PATTERN.matcher(email).matches()) throw new IllegalArgumentException(String.format("Invalid email: %s", email));
+        if (!PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException(String.format("Invalid email: %s", email));
+        }
         emailAddress = email;
     }
 

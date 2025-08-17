@@ -10,7 +10,9 @@ public record TaskName(String name) {
     public TaskName {
         Objects.requireNonNull(name, "Task name cannot be null");
         var taskName = name.strip();
-        if (!PATTERN.matcher(taskName).matches()) throw new IllegalArgumentException(String.format("Invalid task name: %s", taskName));
+        if (!PATTERN.matcher(taskName).matches()) {
+            throw new IllegalArgumentException(String.format("Invalid task name: %s", taskName));
+        }
         name = taskName;
     }
 

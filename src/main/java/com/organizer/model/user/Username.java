@@ -11,7 +11,9 @@ public record Username(String username) {
     public Username {
         Objects.requireNonNull(username, "Username cannot be null");
         var name = username.strip().toLowerCase(Locale.ROOT);
-        if (!PATTERN.matcher(name).matches()) throw new IllegalArgumentException(String.format("Invalid username: %s", name));
+        if (!PATTERN.matcher(name).matches()) {
+            throw new IllegalArgumentException(String.format("Invalid username: %s", name));
+        }
         username = name;
     }
 
