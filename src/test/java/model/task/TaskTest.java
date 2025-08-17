@@ -4,191 +4,145 @@ import com.organizer.model.task.*;
 import com.organizer.model.user.Email;
 import com.organizer.model.user.User;
 import com.organizer.model.user.Username;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskTest {
+@DisplayName("Task Aggregate Tests")
+class TaskTest {
 
-    @Test
-    public void testTaskCreation() {
-        Task task = createTaskWithValidData();
+    private static final TaskName NAME = TaskName.of("Implement login");
+    private static final TaskDescription DESC = TaskDescription.of("Implement authentication with JWT.");
+    private static final Email EMAIL = Email.of("example@org.com");
+    private static final Username USERNAME = Username.of("testUser");
 
-        assertEquals(1L, task.getId(), String.format("Expected task ID to be 1, but got %d", task.getId()));
-        assertEquals("Test Task", task.getName().name(), String.format("Expected task name to be \"Test Task\", but got %s", task.getName()));
-        assertEquals("This is a test task description.", task.getDescription().description(),
-                     String.format("Expected task description to be \"This is a test task description.\", but got %s", task.getDescription()));
-        assertEquals("Medium", task.getPriority().getDisplayName(),
-                     String.format("Expected task priority to be \"Medium\", but got %s", task.getPriority().getDisplayName()));
-        assertEquals("To Do", task.getStatus().getDisplayName(),
-                     String.format("Expected task status to be \"Todo\", but got %s", task.getStatus().getDisplayName()));
+    @Nested
+    @DisplayName("Creation")
+    class CreationTests {
+
+        @Test
+        @DisplayName("should create task with generated TaskId and default priority/status")
+        void shouldCreateWithGeneratedIdAndDefaults() {
+            Task task = new Task(NAME, DESC);
+            assertNotNull(task.getId(), "TaskId should be generated");
+            assertEquals(NAME, task.getName());
+            assertEquals(DESC, task.getDescription());
+            assertEquals(TaskPriority.MEDIUM, task.getPriority(), "Default priority should be MEDIUM");
+            assertEquals(TaskStatus.TODO, task.getStatus(), "Default status should be TODO");
+            assertNull(task.getAssignedUser(), "Assigned user should be null by default");
+        }
+
+        @Test
+        @DisplayName("should create task with explicit TaskId")
+        void shouldCreateWithExplicitId() {
+            TaskId id = TaskId.of("11111111-1111-1111-1111-111111111111");
+            Task task = new Task(id, NAME, DESC);
+            assertEquals(id, task.getId(), "TaskId should match explicit value");
+        }
+
+        @Test
+        @DisplayName("should throw when any required argument is null")
+        void shouldThrowOnNulls() {
+            assertThrows(NullPointerException.class, () -> new Task(null, DESC),
+                    "Task creation should throw NullPointerException when name is null");
+            assertThrows(NullPointerException.class, () -> new Task(NAME, null),
+                    "Task creation should throw NullPointerException when description is null");
+            TaskId id = TaskId.newId();
+            assertThrows(NullPointerException.class, () -> new Task(null, NAME, DESC),
+                    "Task creation should throw NullPointerException when TaskId is null");
+            assertThrows(NullPointerException.class, () -> new Task(id, null, DESC),
+                    "Task creation should throw NullPointerException when name is null");
+            assertThrows(NullPointerException.class, () -> new Task(id, NAME, null),
+                    "Task creation should throw NullPointerException when description is null");
+        }
+
+        @Test
+        @DisplayName("should create with full constructor and validate non-nulls")
+        void shouldCreateWithFullCtor() {
+            User assignee = new User(USERNAME, EMAIL);
+            Task task = new Task(TaskId.newId(), NAME, DESC, TaskPriority.HIGH, TaskStatus.IN_PROGRESS, assignee);
+            assertEquals(TaskPriority.HIGH, task.getPriority(), "Priority should match HIGH");
+            assertEquals(TaskStatus.IN_PROGRESS, task.getStatus(), "Status should match IN_PROGRESS");
+            assertEquals(assignee, task.getAssignedUser(), "Assigned user should match provided user");
+        }
     }
 
-    @Test
-    public void testTaskWithNullId() {
-        assertThrows(NullPointerException.class, () ->
-            new Task(null, new TaskName("Invalid Task"), new TaskDescription("This task has a null ID.")),
-            "Expected NullPointerException for null task ID");
+    @Nested
+    @DisplayName("Change Operations")
+    class ChangeOperationsTests {
+
+        @Test
+        @DisplayName("should change name/description/priority/status")
+        void shouldChangeFields() {
+            Task task = new Task(NAME, DESC);
+            TaskName newName = TaskName.of("Implement logout");
+            TaskDescription newDesc = TaskDescription.of("Add logout endpoint.");
+            task.changeTaskName(newName);
+            task.changeTaskDescription(newDesc);
+            task.changePriority(TaskPriority.LOW);
+            task.changeStatus(TaskStatus.DONE);
+
+            assertEquals(newName, task.getName(), "Name should be updated");
+            assertEquals(newDesc, task.getDescription(), "Description should be updated");
+            assertEquals(TaskPriority.LOW, task.getPriority(), "Priority should be updated to LOW");
+            assertEquals(TaskStatus.DONE, task.getStatus(), "Status should be updated to DONE");
+        }
+
+        @Test
+        @DisplayName("should throw on null in change operations")
+        void shouldThrowOnNullInChanges() {
+            Task task = new Task(NAME, DESC);
+            assertThrows(NullPointerException.class, () -> task.changeTaskName(null),
+                    "ChangeTaskName should throw NullPointerException when name is null");
+            assertThrows(NullPointerException.class, () -> task.changeTaskDescription(null),
+                    "ChangeTaskDescription should throw NullPointerException when description is null");
+            assertThrows(NullPointerException.class, () -> task.changePriority(null),
+                    "ChangePriority should throw NullPointerException when priority is null");
+            assertThrows(NullPointerException.class, () -> task.changeStatus(null),
+                    "ChangeStatus should throw NullPointerException when status is null");
+        }
+
+        @Test
+        @DisplayName("should assign user (non-null)")
+        void shouldAssignUser() {
+            Task task = new Task(NAME, DESC);
+            User user = new User(Username.of("otheruser"), Email.of("example2@org.com"));
+            task.assignUser(user);
+            assertEquals(user, task.getAssignedUser(), "Assigned user should match the one set");
+        }
+
+        @Test
+        @DisplayName("should throw when assigning null user")
+        void shouldThrowWhenAssigningNull() {
+            Task task = new Task(NAME, DESC);
+            assertThrows(NullPointerException.class, () -> task.assignUser(null),
+                    "AssignUser should throw NullPointerException when user is null");
+        }
     }
 
-    @Test
-    public void testTaskWithEmptyName() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new Task(1L, new TaskName(""),new TaskDescription("This task has an empty name.")),
-                     "Expected IllegalArgumentException for empty task name");
+    @Nested
+    @DisplayName("Equality & HashCode")
+    class EqualityAndHashCodeTests {
+
+        @Test
+        @DisplayName("should be equal for the same TaskId")
+        void shouldBeEqualForSameId() {
+            TaskId same = TaskId.of("22222222-2222-2222-2222-222222222222");
+            Task t1 = new Task(same, NAME, DESC);
+            Task t2 = new Task(same, NAME, DESC);
+            assertEquals(t1, t2, "Tasks with same TaskId should be equal");
+            assertEquals(t1.hashCode(), t2.hashCode(), "Hash codes should match for equal Task objects");
+        }
+
+        @Test
+        @DisplayName("should not be equal for different TaskIds")
+        void shouldNotBeEqualForDifferentIds() {
+            Task t1 = new Task(TaskId.of("33333333-3333-3333-3333-333333333333"), NAME, DESC);
+            Task t2 = new Task(TaskId.of("44445444-4444-4444-4444-444444444444"), NAME, DESC);
+            assertNotEquals(t1, t2, "Tasks with different TaskIds should not be equal");
+            assertNotEquals(t1.hashCode(), t2.hashCode(), "Hash codes should differ for different TaskIds");
+        }
     }
-
-    @Test
-    public void testTaskWithNullName() {
-        assertThrows(NullPointerException.class, () ->
-                new Task(1L, null, new TaskDescription("This task has a null name.")),
-                     "Expected NullPointerException for null task name");
-    }
-
-    @Test
-    public void testTaskWithEmptyDescription() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new Task(1L, new TaskName("Valid Task"), new TaskDescription("")),
-                     "Expected IllegalArgumentException for empty task description");
-    }
-
-    @Test
-    public void testTaskWithNullDescription() {
-        assertThrows(NullPointerException.class, () ->
-                new Task(1L, new TaskName("Valid Task"), null),
-                     "Expected NullPointerException for null task description");
-    }
-
-    @Test
-    public void testSetNewName() {
-        Task task = createTaskWithValidData();
-        assertEquals("Test Task", task.getName().name(),
-                     String.format("Expected task name to be \"Test Task\", but got %s", task.getName()));
-
-        task.changeTaskName(new TaskName("Updated Name"));
-        assertEquals("Updated Name", task.getName().name(),
-                     String.format("Expected task name to be \"Updated Name\", but got %s", task.getName()));
-    }
-
-    @Test
-    public void testSetNewNameWithNull() {
-        Task task = new Task(1L, new TaskName("Task Name"), new TaskDescription("Task Description"));
-        assertThrows(NullPointerException.class, () -> task.changeTaskName(null),
-                     "Expected NullPointerException when setting task name to null");
-    }
-
-    @Test
-    public void testSetNewDescription() {
-        Task task = createTaskWithValidData();
-        assertEquals("This is a test task description.", task.getDescription().description(),
-                     String.format("Expected task description to be \"This is a test task description.\", but got %s", task.getDescription()));
-
-        task.changeTaskDescription(new TaskDescription("Updated Description"));
-        assertEquals("Updated Description", task.getDescription().description(),
-                     String.format("Expected task description to be \"Updated Description\", but got %s", task.getDescription()));
-    }
-
-    @Test
-    public void testSetNewDescriptionWithNull() {
-        Task task = new Task(1L, new TaskName("Task Name"), new TaskDescription("Task Description"));
-        assertThrows(NullPointerException.class, () -> task.changeTaskDescription(null),
-                     "Expected NullPointerException when setting task description to null");
-    }
-
-    @Test
-    public void testSetPriorityHigh() {
-        Task task = createTaskWithValidData();
-        assertEquals("Medium", task.getPriority().getDisplayName(),
-                     String.format("Expected task priority to be \"Medium\", but got %s", task.getPriority().getDisplayName()));
-
-        task.changePriority(TaskPriority.HIGH);
-        assertEquals("High", task.getPriority().getDisplayName(),
-                     String.format("Expected task priority to be \"High\", but got %s", task.getPriority().getDisplayName()));
-    }
-
-    @Test
-    public void testSetPriorityLow() {
-        Task task = createTaskWithValidData();
-        assertEquals("Medium", task.getPriority().getDisplayName(),
-                     String.format("Expected task priority to be \"Medium\", but got %s", task.getPriority().getDisplayName()));
-
-        task.changePriority(TaskPriority.LOW);
-        assertEquals("Low", task.getPriority().getDisplayName(),
-                     String.format("Expected task priority to be \"Low\", but got %s", task.getPriority().getDisplayName()));
-    }
-
-    @Test
-    public void testSetStatusInProgress() {
-        Task task = createTaskWithValidData();
-        assertEquals("To Do", task.getStatus().getDisplayName(),
-                     String.format("Expected task status to be \"Todo\", but got %s", task.getStatus().getDisplayName()));
-
-        task.changeStatus(TaskStatus.IN_PROGRESS);
-        assertEquals("In Progress", task.getStatus().getDisplayName(),
-                     String.format("Expected task status to be \"In Progress\", but got %s", task.getStatus().getDisplayName()));
-    }
-
-    @Test
-    public void testSetStatusDone() {
-        Task task = createTaskWithValidData();
-        assertEquals("To Do", task.getStatus().getDisplayName(),
-                     String.format("Expected task status to be \"Todo\", but got %s", task.getStatus().getDisplayName()));
-
-        task.changeStatus(TaskStatus.DONE);
-        assertEquals("Done", task.getStatus().getDisplayName(),
-                     String.format("Expected task status to be \"Done\", but got %s", task.getStatus().getDisplayName()));
-    }
-
-    @Test
-    public void testTaskIsEqual() {
-        Task task1 = new Task(1L, new TaskName("Task A"), new TaskDescription("Description A"));
-        Task task2 = new Task(1L, new TaskName("Task B"), new TaskDescription("Description B"));
-
-        assertEquals(task1, task2, "Tasks with the same ID should be equal");
-    }
-
-    @Test
-    public void testTaskIsNotEqual() {
-        Task task1 = new Task(1L, new TaskName("Task A"), new TaskDescription("Description A"));
-        Task task2 = new Task(2L, new TaskName("Task B"), new TaskDescription("Description B"));
-
-        assertNotEquals(task1, task2, "Tasks with different IDs should not be equal");
-    }
-
-    @Test
-    public void testTaskHashCode() {
-        Task task1 = new Task(1L, new TaskName("Task A"), new TaskDescription("Description A"));
-        Task task2 = new Task(1L, new TaskName("Task B"), new TaskDescription("Description B"));
-
-        assertEquals(task1.hashCode(), task2.hashCode(), "Tasks with the same ID should have the same hash code");
-    }
-
-    @Test
-    public void testTaskHashCodeNotEqual() {
-        Task task1 = new Task(1L, new TaskName("Task A"), new TaskDescription("Description A"));
-        Task task2 = new Task(2L, new TaskName("Task B"), new TaskDescription("Description B"));
-
-        assertNotEquals(task1.hashCode(), task2.hashCode(), "Tasks with different IDs should have different hash codes");
-    }
-
-    @Test
-    public void testAssignUser() {
-        Task task = createTaskWithValidData();
-        User user = new User(1L, new Username("testuser"), new Email("example@org.com"));
-
-        task.assignUser(user);
-        assertEquals(user, task.getAssignedUser(), "Assigned user should match the user assigned to the task");
-    }
-
-    @Test
-    public void testAssignUserWithNull() {
-        Task task = createTaskWithValidData();
-        assertThrows(NullPointerException.class, () -> task.assignUser(null),
-                     "Expected NullPointerException when assigning null user to task");
-    }
-
-    private Task createTaskWithValidData() {
-        return new Task(1L, new TaskName("Test Task"), new TaskDescription("This is a test task description."));
-    }
-
 }
