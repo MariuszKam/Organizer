@@ -1,24 +1,21 @@
-package com.organizer.model;
+package com.organizer.model.project;
 
 import com.organizer.model.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class Project {
+public final class Project {
 
     private final Long id;
-    private String name;
+    private ProjectName name;
     private final List<Task> taskList;
 
-    public Project(Long id, String name) {
-        if (id == null) {
-            throw new IllegalArgumentException("Project ID cannot be null");
-        }
+    public Project(Long id, ProjectName name) {
+        Objects.requireNonNull(id, "Project ID cannot be null");
         this.id = id;
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Project name cannot be null or empty");
-        }
+        Objects.requireNonNull(name, "Project name cannot be null");
         this.name = name;
         this.taskList = new ArrayList<>();
     }
@@ -27,11 +24,12 @@ public class Project {
         return id;
     }
 
-    public String getName() {
+    public ProjectName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void changeProjectName(ProjectName name) {
+        Objects.requireNonNull(name, "Project name cannot be null");
         this.name = name;
     }
 
@@ -40,9 +38,7 @@ public class Project {
     }
 
     public boolean addTask(Task task) {
-        if (task == null) {
-            throw new IllegalArgumentException("Task cannot be null.");
-        }
+        Objects.requireNonNull(task, "Task cannot be null");
         return taskList.add(task);
     }
 
