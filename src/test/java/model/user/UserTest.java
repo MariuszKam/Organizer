@@ -23,7 +23,7 @@ public class UserTest {
     @Test
     public void testUserWithNullId() {
         assertThrows(NullPointerException.class, () -> new User(null, testUsername, testEmail),
-                "User creation should throw IllegalArgumentException when ID is null");
+                "User creation should throw NullPointerException when ID is null");
     }
 
     @Test
