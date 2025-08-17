@@ -31,7 +31,7 @@ class UsernameTest {
         }
 
         @Test
-        @DisplayName("should throw when username format is invalid (non-lowercase letters)")
+        @DisplayName("should throw when username format is invalid")
         void shouldThrowWhenInvalidFormat() {
             assertThrows(IllegalArgumentException.class, () -> new Username("invalid-user"),
                     "Username creation should throw IllegalArgumentException for invalid format");
