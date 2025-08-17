@@ -31,7 +31,6 @@ public final class Task {
         this.priority = priority;
         Objects.requireNonNull(status, "Task status cannot be null");
         this.status = status;
-        Objects.requireNonNull(assignedUser, "Assigned user cannot be null");
         this.assignedUser = assignedUser;
     }
 
