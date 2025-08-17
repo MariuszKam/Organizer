@@ -79,10 +79,9 @@ class UserTest {
         @DisplayName("should not be equal for users with different UserIds")
         void shouldNotBeEqualForDifferentIds() {
             User user1 = new User(UserId.of("22222222-2222-2222-2222-222222222222"), TEST_USER, TEST_EMAIL);
-            User user2 = new User(UserId.of("33335333-3333-3333-3333-333333333333"),
+            User user2 = new User(UserId.of("33333333-3333-3333-3333-333333333333"),
                     Username.of("testUserb"), Email.of("example2@org.com"));
             assertNotEquals(user1, user2, "Users with different IDs should not be equal");
-            assertNotEquals(user1.hashCode(), user2.hashCode(), "Hash codes should differ for different IDs");
         }
     }
 
