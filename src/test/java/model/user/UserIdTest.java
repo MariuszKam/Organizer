@@ -10,7 +10,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("UserId Value Object Tests")
-public class UserIdTest {
+class UserIdTest {
 
     @Nested
     @DisplayName("Creation")
