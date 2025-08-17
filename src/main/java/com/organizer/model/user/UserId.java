@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public record UserId(UUID value) {
 
-    private static final java.util.UUID NIL = new UUID(0L, 0L);
+    private static final UUID NIL = new UUID(0L, 0L);
 
     public UserId {
         Objects.requireNonNull(value, "User ID cannot be null");

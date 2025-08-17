@@ -44,7 +44,7 @@ public final class Project {
     public boolean addTask(Task task) {
         Objects.requireNonNull(task, "Task cannot be null");
         if (taskList.contains(task)) {
-            throw new IllegalArgumentException("Task already exists in the project");
+            throw new IllegalArgumentException(String.format("Task with ID %s already exists in project %s", task.getId(), id));
         }
         return taskList.add(task);
     }
