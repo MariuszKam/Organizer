@@ -1,4 +1,6 @@
 package com.organizer.service.user.usecase.update;
 
-public record UpdateUserCommand(String userId, String username, String email) {
+import java.util.Optional;
+
+public record UpdateUserCommand(String userId, Optional<String> username, Optional<String> email) {
 }

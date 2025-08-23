@@ -8,14 +8,13 @@ public sealed interface UpdateUserResult {
 
     enum Error implements UpdateUserResult {
         MISSING_COMMAND,
+        NO_FIELDS_PROVIDED,
         MISSING_USER_ID,
         INVALID_USER_ID_FORMAT,
         USER_NOT_FOUND,
         USERNAME_ALREADY_EXISTS,
         INVALID_USERNAME_FORMAT,
-        MISSING_USERNAME,
         EMAIL_ALREADY_EXISTS,
-        MISSING_EMAIL,
         INVALID_EMAIL_FORMAT
     }
 }
