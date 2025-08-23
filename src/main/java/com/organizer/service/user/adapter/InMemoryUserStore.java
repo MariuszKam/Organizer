@@ -6,10 +6,7 @@ import com.organizer.model.user.UserId;
 import com.organizer.model.user.Username;
 import com.organizer.service.user.port.UserStore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class InMemoryUserStore implements UserStore {
 
@@ -43,10 +40,27 @@ public final class InMemoryUserStore implements UserStore {
 
     @Override
     public void save(User user) {
+        Objects.requireNonNull(user, "user cannot be null");
+
+        User owner = usersByUsername.get(user.getUsername());
+        if (owner != null && !owner.getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Username already exists: " + user.getUsername());
+        }
+
+        owner = usersByEmail.get(user.getEmail());
+        if (owner != null && !owner.getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
+        }
+
         if (usersById.containsKey(user.getId())) {
             User existingUser = usersById.get(user.getId());
-            usersByUsername.remove(existingUser.getUsername());
-            usersByEmail.remove(existingUser.getEmail());
+            if (existingUser.getUsername().equals(user.getUsername()) && existingUser.getEmail().equals(user.getEmail())) {
+                // No changes in username or email, just return
+                return;
+            } else {
+                usersByUsername.remove(existingUser.getUsername());
+                usersByEmail.remove(existingUser.getEmail());
+            }
         }
         usersByUsername.put(user.getUsername(), user);
         usersByEmail.put(user.getEmail(), user);
@@ -62,4 +76,5 @@ public final class InMemoryUserStore implements UserStore {
     public List<User> findAll() {
         return List.copyOf(usersById.values());
     }
+
 }
