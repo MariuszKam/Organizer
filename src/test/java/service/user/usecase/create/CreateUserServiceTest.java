@@ -140,7 +140,8 @@ class CreateUserServiceTest {
             assertInstanceOf(CreateUserResult.Ok.class, result,
                     String.format("Expected result to be instance of Ok but got: %s", result));
             CreateUserResult.Ok okResult = (CreateUserResult.Ok) result;
-            assertNotNull(userStore.findById(okResult.userId()), "User should be found in store by generated userId");
+            assertTrue(userStore.findById(okResult.userId()).isPresent(),
+                    "User should be found in store by generated userId");
         }
     }
 }
