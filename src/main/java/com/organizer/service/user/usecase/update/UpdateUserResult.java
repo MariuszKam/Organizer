@@ -12,6 +12,7 @@ public sealed interface UpdateUserResult {
         MISSING_USER_ID,
         INVALID_USER_ID_FORMAT,
         USER_NOT_FOUND,
+        NO_CHANGES,
         USERNAME_ALREADY_EXISTS,
         INVALID_USERNAME_FORMAT,
         EMAIL_ALREADY_EXISTS,

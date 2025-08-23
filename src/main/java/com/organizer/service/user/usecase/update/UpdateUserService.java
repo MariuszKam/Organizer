@@ -6,8 +6,6 @@ import com.organizer.model.user.UserId;
 import com.organizer.model.user.Username;
 import com.organizer.service.user.port.UserStore;
 
-import java.util.Optional;
-
 public class UpdateUserService implements UpdateUserUseCase {
 
     private final UserStore userStore;
@@ -20,56 +18,59 @@ public class UpdateUserService implements UpdateUserUseCase {
     public UpdateUserResult handle(UpdateUserCommand command) {
         if (command == null) {
             return UpdateUserResult.Error.MISSING_COMMAND;
-        } else if (command.username().isEmpty() && command.email().isEmpty()) {
-            return UpdateUserResult.Error.NO_FIELDS_PROVIDED;
         }
 
-        UserId userId;
+        if (command.username().isEmpty() && command.email().isEmpty()) {
+            return UpdateUserResult.Error.NO_FIELDS_PROVIDED;
+        }
 
         if (command.userId() == null) {
             return UpdateUserResult.Error.MISSING_USER_ID;
         }
 
+        UserId userId;
         try {
             userId = UserId.of(command.userId());
         } catch (IllegalArgumentException e) {
             return UpdateUserResult.Error.INVALID_USER_ID_FORMAT;
         }
 
-        Optional<User> existingUser = userStore.findById(userId);
+        User existingUser = userStore.findById(userId).orElse(null);
 
-        if (existingUser.isEmpty()) {
+        if (existingUser == null) {
             return UpdateUserResult.Error.USER_NOT_FOUND;
         }
 
         Username username;
-
-        if (command.username().isPresent()) {
-            try {
-                username = Username.of(command.username().get());
-            } catch (IllegalArgumentException e) {
-                return UpdateUserResult.Error.INVALID_USERNAME_FORMAT;
-            }
-            if (userStore.existsByUsername(username)) {
-                return UpdateUserResult.Error.USERNAME_ALREADY_EXISTS;
-            }
-        } else {
-            username = existingUser.get().getUsername();
+        try {
+            username = command.username()
+                    .map(Username::of)
+                    .orElse(existingUser.getUsername());
+        } catch (IllegalArgumentException e) {
+            return UpdateUserResult.Error.INVALID_USERNAME_FORMAT;
         }
 
         Email email;
+        try {
+            email = command.email()
+                    .map(Email::of)
+                    .orElse(existingUser.getEmail());
+        } catch (IllegalArgumentException e) {
+            return UpdateUserResult.Error.INVALID_EMAIL_FORMAT;
+        }
 
-        if (command.email().isPresent()) {
-            try {
-                email = Email.of(command.email().get());
-            } catch (IllegalArgumentException e) {
-                return UpdateUserResult.Error.INVALID_EMAIL_FORMAT;
-            }
-            if (userStore.existsByEmail(email)) {
-                return UpdateUserResult.Error.EMAIL_ALREADY_EXISTS;
-            }
-        } else {
-            email = existingUser.get().getEmail();
+        if (username.equals(existingUser.getUsername()) &&
+                email.equals(existingUser.getEmail())) {
+            return UpdateUserResult.Error.NO_CHANGES;
+        }
+
+        if (userStore.existsByUsername(username)
+                && !existingUser.getUsername().equals(username)) {
+            return UpdateUserResult.Error.USERNAME_ALREADY_EXISTS;
+        }
+        if (userStore.existsByEmail(email)
+                && !existingUser.getEmail().equals(email)) {
+            return UpdateUserResult.Error.EMAIL_ALREADY_EXISTS;
         }
 
         User user = new User(userId, username, email);

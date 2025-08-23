@@ -80,6 +80,18 @@ public class UpdateUserServiceTest {
         }
 
         @Test
+        @DisplayName("should return NO_CHANGES when username, and email already exists")
+        void shouldReturnNoChangesWhenUsernameAndEmailAlreadyExists() {
+            UpdateUserCommand command = new UpdateUserCommand(
+                    existingUser.getId().toString(),
+                    Optional.of(existingUser.getUsername().username()),
+                    Optional.of(existingUser.getEmail().emailAddress()
+                    ));
+            UpdateUserResult result = service.handle(command);
+            assertEquals(UpdateUserResult.Error.NO_CHANGES, result, "Expected NO_CHANGES error");
+        }
+
+        @Test
         @DisplayName("should return USERNAME_ALREADY_EXISTS when new username already exists")
         void shouldReturnUsernameAlreadyExistsWhenNewUsernameAlreadyExists() {
             User anotherUser = new User(Username.of(NEW_USERNAME), Email.of("another@org.com"));
