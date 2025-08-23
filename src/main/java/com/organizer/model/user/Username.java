@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public record Username(String username) {
 
-    private static final Pattern PATTERN = Pattern.compile("^[a-z]{4,10}$");
+    private static final Pattern PATTERN = Pattern.compile("^[a-z]{4,12}$");
 
     public Username {
         Objects.requireNonNull(username, "Username cannot be null");
