@@ -97,6 +97,12 @@ class InMemoryUserStoreTest {
             void shouldReturnFalseForNonExistingId() {
                 assertFalse(userStore.findById(TEST_USER_NOT_EXISTED.getId()).isPresent());
             }
+
+            @Test
+            @DisplayName("Should return the correct user by ID")
+            void shouldReturnTheCorrectUserById() {
+                assertEquals(TEST_USER_EXISTED, userStore.findById(TEST_USER_EXISTED.getId()).orElse(null));
+            }
         }
 
         @Nested
