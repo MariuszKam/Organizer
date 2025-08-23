@@ -57,6 +57,6 @@ public class CreateUserService implements CreateUserUseCase {
 
         User user = new User(userId, username, email);
         userStore.save(user);
-        return new CreateUserResult.Ok(userId.toString());
+        return new CreateUserResult.Ok(userId);
     }
 }
