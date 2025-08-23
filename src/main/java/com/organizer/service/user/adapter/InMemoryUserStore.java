@@ -60,6 +60,6 @@ public final class InMemoryUserStore implements UserStore {
 
     @Override
     public List<User> findAll() {
-        return List.copyOf(usersByUsername.values());
+        return List.copyOf(usersById.values());
     }
 }
