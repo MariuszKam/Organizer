@@ -33,8 +33,21 @@ public final class InMemoryUserStore implements UserStore {
         return usersByUsername.containsKey(username);
     }
 
+    /**
+     * Saves or updates a user in the store.
+     * If a user with the same ID already exists, it will be updated.
+     * If the username or email has changed, the old entries will be removed.
+     *
+     * @param user the user to save or update
+     */
+
     @Override
     public void save(User user) {
+        if (usersById.containsKey(user.getId())) {
+            User existingUser = usersById.get(user.getId());
+            usersByUsername.remove(existingUser.getUsername());
+            usersByEmail.remove(existingUser.getEmail());
+        }
         usersByUsername.put(user.getUsername(), user);
         usersByEmail.put(user.getEmail(), user);
         usersById.put(user.getId(), user);

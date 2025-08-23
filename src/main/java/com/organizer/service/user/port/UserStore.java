@@ -10,8 +10,12 @@ import java.util.Optional;
 
 public interface UserStore {
     boolean existsByEmail(Email email);
+
     boolean existsByUsername(Username username);
+
     void save(User user);
+
     Optional<User> findById(UserId userId);
+
     List<User> findAll();
 }
