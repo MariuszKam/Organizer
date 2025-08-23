@@ -8,6 +8,14 @@ public final class User {
     private Username username;
     private Email email;
 
+    /**
+     * Create a new User with a generated ID.
+     *
+     * @param username the username of the user
+     * @param email    the email of the user
+     * @throws NullPointerException if username or email is null
+     */
+
     public User(Username username, Email email) {
         this(UserId.newId(), username, email);
     }
