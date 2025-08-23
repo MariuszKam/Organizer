@@ -37,6 +37,7 @@ public final class InMemoryUserStore implements UserStore {
     public void save(User user) {
         usersByUsername.put(user.getUsername(), user);
         usersByEmail.put(user.getEmail(), user);
+        usersById.put(user.getId(), user);
     }
 
     @Override
