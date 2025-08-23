@@ -32,6 +32,83 @@ class InMemoryUserStoreTest {
             assertTrue(userStore.existsByEmail(TEST_USER_EXISTED.getEmail()));
         }
 
+        @Test
+        @DisplayName("Should throw exception when saving null user")
+        void shouldThrowExceptionWhenSavingNullUser() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            assertThrows(NullPointerException.class, () -> userStore.save(null));
+        }
+
+        @Test
+        @DisplayName("Should throw exception when saving user with existing username")
+        void shouldThrowExceptionWhenSavingUserWithExistingUsername() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            userStore.save(TEST_USER_EXISTED);
+            User duplicateUsernameUser = new User(TEST_USER_EXISTED.getUsername(), new Email("newemail@org.com"));
+            assertThrows(IllegalArgumentException.class, () -> userStore.save(duplicateUsernameUser));
+        }
+
+        @Test
+        @DisplayName("Should throw exception when saving user with existing email")
+        void shouldThrowExceptionWhenSavingUserWithExistingEmail() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            userStore.save(TEST_USER_EXISTED);
+            User duplicateEmailUser = new User(new Username("newuser"), TEST_USER_EXISTED.getEmail());
+            assertThrows(IllegalArgumentException.class, () -> userStore.save(duplicateEmailUser));
+        }
+
+        @Test
+        @DisplayName("Should update user username successfully")
+        void shouldUpdateUsernameSuccessfully() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            userStore.save(TEST_USER_EXISTED);
+            User updatedUser = new User(TEST_USER_EXISTED.getId(), new Username("updateduser"), TEST_USER_EXISTED.getEmail());
+            userStore.save(updatedUser);
+            User newUser = userStore.findById(TEST_USER_EXISTED.getId()).orElse(null);
+            assertNotNull(newUser, "Updated user should be found");
+            assertEquals(updatedUser, newUser, "Updated user should match the saved user");
+            assertEquals(updatedUser.getUsername(), newUser.getUsername(), "Username should be updated");
+            assertEquals(updatedUser.getEmail(), newUser.getEmail(), "Email should remain unchanged");
+        }
+
+        @Test
+        @DisplayName("Should update user email successfully")
+        void shouldUpdateEmailSuccessfully() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            userStore.save(TEST_USER_EXISTED);
+            User updatedUser = new User(TEST_USER_EXISTED.getId(), TEST_USER_EXISTED.getUsername(), new Email("newmail@org.com"));
+            userStore.save(updatedUser);
+            User newUser = userStore.findById(TEST_USER_EXISTED.getId()).orElse(null);
+            assertNotNull(newUser, "Updated user should be found");
+            assertEquals(updatedUser, newUser, "Updated user should match the saved user");
+            assertEquals(updatedUser.getUsername(), newUser.getUsername(), "Username should remain unchanged");
+            assertEquals(updatedUser.getEmail(), newUser.getEmail(), "Email should be updated");
+        }
+
+        @Test
+        @DisplayName("Should update user email, and username successfully")
+        void shouldUpdateUserSuccessfully() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            userStore.save(TEST_USER_EXISTED);
+            User updatedUser = new User(TEST_USER_EXISTED.getId(), new Username("updateduser"), new Email("newone@org.com"));
+            userStore.save(updatedUser);
+            User newUser = userStore.findById(TEST_USER_EXISTED.getId()).orElse(null);
+            assertNotNull(newUser, "Updated user should be found");
+            assertEquals(updatedUser, newUser, "Updated user should match the saved user");
+            assertEquals(updatedUser.getUsername(), newUser.getUsername(), "Username should be updated");
+            assertEquals(updatedUser.getEmail(), newUser.getEmail(), "Email should be updated");
+        }
+
+        @Test
+        @DisplayName("Should not change store when updating user with same data")
+        void shouldNotChangeStoreWhenUpdatingUserWithSameData() {
+            InMemoryUserStore userStore = new InMemoryUserStore();
+            userStore.save(TEST_USER_EXISTED);
+            userStore.save(TEST_USER_EXISTED); // Save the same user again
+            List<User> users = userStore.findAll();
+            assertEquals(1, users.size(), "Store should still contain only one user");
+            assertEquals(TEST_USER_EXISTED, users.getFirst(), "The user in the store should match the original user");
+        }
     }
 
     @Nested
