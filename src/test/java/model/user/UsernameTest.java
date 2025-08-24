@@ -45,9 +45,9 @@ class UsernameTest {
         }
 
         @Test
-        @DisplayName("should throw when username is too long (> 10 chars)")
+        @DisplayName("should throw when username is too long (> 12 chars)")
         void shouldThrowWhenTooLong() {
-            assertThrows(IllegalArgumentException.class, () -> new Username("abcdefghija"), // 11 chars
+            assertThrows(IllegalArgumentException.class, () -> new Username("abcdefghijasa"), // 13 chars
                     "Username creation should throw IllegalArgumentException when too long");
         }
     }
