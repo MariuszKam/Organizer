@@ -26,15 +26,10 @@ public class ReadUserService implements ReadUserUseCase {
             return ReadUserResult.Error.MISSING_COMMAND;
         }
 
-        switch (command) {
-            case ReadUserByIdCommand byId -> {
-                return handleReadById(byId.id());
-            }
-            case ReadUserForLoginCommand login -> {
-                return handleReadLogin(login.username(), login.email());
-            }
-        }
-
+        return switch (command) {
+            case ReadUserByIdCommand byId -> handleReadById(byId.id());
+            case ReadUserForLoginCommand login -> handleReadLogin(login.username(), login.email());
+        };
     }
 
     private ReadUserResult handleReadById(String id) {
