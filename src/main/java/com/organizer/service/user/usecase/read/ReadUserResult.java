@@ -9,7 +9,7 @@ public sealed interface ReadUserResult {
     enum Error implements ReadUserResult {
         MISSING_COMMAND,
         MISSING_USER_ID,
-        INVALID_USER_ID,
+        INVALID_USER_ID_FORMAT,
         USER_NOT_FOUND,
         NO_PROVIDED_PARAMETERS,
         MISSING_USERNAME,
