@@ -64,7 +64,7 @@ class ReadUserServiceTest {
         @DisplayName("should return INVALID_USER_ID when id format is invalid")
         void shouldReturnInvalidUserIdWhenIdFormatIsInvalid() {
             ReadUserResult result = service.handle(new ReadUserByIdCommand("invalid-uuid"));
-            assertEquals(ReadUserResult.Error.INVALID_USER_ID, result,
+            assertEquals(ReadUserResult.Error.INVALID_USER_ID_FORMAT, result,
                     String.format("Expected INVALID_USER_ID but got: %s", result));
         }
 
