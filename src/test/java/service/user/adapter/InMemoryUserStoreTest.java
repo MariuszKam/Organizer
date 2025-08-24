@@ -128,15 +128,31 @@ class InMemoryUserStoreTest {
         class ExistsByUsernameTests {
 
             @Test
+            @DisplayName("Should find User by Username")
+            void shouldReturnUserByUsername() {
+                assertTrue(userStore.findByUsername(TEST_USER_EXISTED.getUsername()).isPresent(),
+                        "User should be found by username");
+            }
+
+            @Test
+            @DisplayName("Should not find User by non-existing username")
+            void shouldReturnEmptyOptionalForNonExistingUsername() {
+                assertTrue(userStore.findByUsername(TEST_USER_NOT_EXISTED.getUsername()).isEmpty(),
+                        "User should be not found by username");
+            }
+
+            @Test
             @DisplayName("Should confirm existence by username")
             void shouldConfirmExistenceByUsername() {
-                assertTrue(userStore.existsByUsername(TEST_USER_EXISTED.getUsername()));
+                assertTrue(userStore.existsByUsername(TEST_USER_EXISTED.getUsername()),
+                        "User should be found by username");
             }
 
             @Test
             @DisplayName("Should return false for non-existing username")
             void shouldReturnFalseForNonExistingUsername() {
-                assertFalse(userStore.existsByUsername(TEST_USER_NOT_EXISTED.getUsername()));
+                assertFalse(userStore.existsByUsername(TEST_USER_NOT_EXISTED.getUsername()),
+                        "User should not be found by username");
             }
 
         }
@@ -144,6 +160,20 @@ class InMemoryUserStoreTest {
         @Nested
         @DisplayName("Exists By Email Tests")
         class ExistsByEmailTests {
+
+            @Test
+            @DisplayName("Should find User by Email")
+            void shouldFindUserByEmail() {
+                assertTrue(userStore.findByEmail(TEST_USER_EXISTED.getEmail()).isPresent(),
+                        "User should be found by email");
+            }
+
+            @Test
+            @DisplayName("Should not find User by non-existing Email")
+            void shouldReturnEmptyOptionalForNonExistingEmail() {
+                assertTrue(userStore.findByEmail(TEST_USER_NOT_EXISTED.getEmail()).isEmpty(),
+                        "Should return empty optional for non-existing email");
+            }
 
             @Test
             @DisplayName("Should confirm existence by email")
