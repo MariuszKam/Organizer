@@ -69,6 +69,8 @@ public final class InMemoryUserStore implements UserStore {
 
     @Override
     public void remove(User user) {
+        Objects.requireNonNull(user, "User cannot be null");
+
         usersByUsername.remove(user.getUsername());
         usersByEmail.remove(user.getEmail());
         usersById.remove(user.getId());
