@@ -15,6 +15,8 @@ public interface UserStore {
 
     void save(User user);
 
+    void remove(User user);
+
     Optional<User> findById(UserId userId);
 
     Optional<User> findByUsername(Username username);

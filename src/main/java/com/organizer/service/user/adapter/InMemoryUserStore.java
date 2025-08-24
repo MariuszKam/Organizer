@@ -68,6 +68,13 @@ public final class InMemoryUserStore implements UserStore {
     }
 
     @Override
+    public void remove(User user) {
+        usersByUsername.remove(user.getUsername());
+        usersByEmail.remove(user.getEmail());
+        usersById.remove(user.getId());
+    }
+
+    @Override
     public Optional<User> findById(UserId userId) {
         return Optional.ofNullable(usersById.get(userId));
     }
