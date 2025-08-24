@@ -17,5 +17,9 @@ public interface UserStore {
 
     Optional<User> findById(UserId userId);
 
+    Optional<User> findByUsername(Username username);
+
+    Optional<User> findByEmail(Email email);
+
     List<User> findAll();
 }

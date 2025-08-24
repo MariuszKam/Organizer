@@ -73,6 +73,16 @@ public final class InMemoryUserStore implements UserStore {
     }
 
     @Override
+    public Optional<User> findByUsername(Username username) {
+        return Optional.ofNullable(usersByUsername.get(username));
+    }
+
+    @Override
+    public Optional<User> findByEmail(Email email) {
+        return Optional.ofNullable(usersByEmail.get(email));
+    }
+
+    @Override
     public List<User> findAll() {
         return List.copyOf(usersById.values());
     }
