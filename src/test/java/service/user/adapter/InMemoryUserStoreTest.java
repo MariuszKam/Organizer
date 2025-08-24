@@ -233,5 +233,91 @@ class InMemoryUserStoreTest {
             }
         }
 
+        @Nested
+        @DisplayName("Remove User Tests")
+        class RemoveUserTests {
+
+            private InMemoryUserStore userStore;
+
+            @BeforeEach
+            void setUp() {
+                userStore = new InMemoryUserStore();
+                userStore.save(TEST_USER_EXISTED);
+            }
+
+            @Test
+            @DisplayName("Should throw exception when removing null user")
+            void shouldThrowExceptionWhenRemovingNullUser() {
+                assertThrows(NullPointerException.class, () -> userStore.remove(null),
+                        "Expected NullPointerException when removing null user");
+            }
+
+            @Test
+            @DisplayName("Should remove existing user from all indexes")
+            void shouldRemoveExistingUserFromAllIndexes() {
+                assertDoesNotThrow(() -> userStore.remove(TEST_USER_EXISTED),
+                        "Removing existing user should not throw");
+
+                assertTrue(userStore.findById(TEST_USER_EXISTED.getId()).isEmpty(),
+                        String.format("User with id %s should be removed from byId", TEST_USER_EXISTED.getId()));
+                assertFalse(userStore.existsByUsername(TEST_USER_EXISTED.getUsername()),
+                        String.format("Username %s should be free after removal", TEST_USER_EXISTED.getUsername()));
+                assertFalse(userStore.existsByEmail(TEST_USER_EXISTED.getEmail()),
+                        String.format("Email %s should be free after removal", TEST_USER_EXISTED.getEmail()));
+
+                assertFalse(userStore.findAll().contains(TEST_USER_EXISTED),
+                        "findAll should not contain removed user");
+            }
+
+            @Test
+            @DisplayName("Should be idempotent when removing the same user twice")
+            void shouldBeIdempotentWhenRemovingSameUserTwice() {
+                assertDoesNotThrow(() -> userStore.remove(TEST_USER_EXISTED),
+                        "First removal should not throw");
+
+                assertDoesNotThrow(() -> userStore.remove(TEST_USER_EXISTED),
+                        "Second removal should be a no-op (idempotent)");
+
+                assertTrue(userStore.findById(TEST_USER_EXISTED.getId()).isEmpty(),
+                        "User should remain absent from byId after second removal");
+                assertFalse(userStore.existsByUsername(TEST_USER_EXISTED.getUsername()),
+                        "Username should remain free after second removal");
+                assertFalse(userStore.existsByEmail(TEST_USER_EXISTED.getEmail()),
+                        "Email should remain free after second removal");
+            }
+
+            @Test
+            @DisplayName("Should not modify store when removing non-existing user")
+            void shouldNotModifyStoreWhenRemovingNonExistingUser() {
+                int sizeBefore = userStore.findAll().size();
+
+                assertDoesNotThrow(() -> userStore.remove(TEST_USER_NOT_EXISTED),
+                        "Removing non-existing user should not throw");
+
+                int sizeAfter = userStore.findAll().size();
+                assertEquals(sizeBefore, sizeAfter,
+                        "Removing non-existing user should not change store size");
+                assertTrue(userStore.findById(TEST_USER_EXISTED.getId()).isPresent(),
+                        "Existing user should remain in store");
+            }
+
+            @Test
+            @DisplayName("Should allow reusing username/email after remove")
+            void shouldAllowReusingUsernameAndEmailAfterRemove() {
+                userStore.remove(TEST_USER_EXISTED);
+
+                User recreated = new User(TEST_USER_EXISTED.getUsername(), TEST_USER_EXISTED.getEmail());
+                assertDoesNotThrow(() -> userStore.save(recreated),
+                        "Saving a user with previously used username/email should be allowed after removal");
+
+                assertTrue(userStore.existsByUsername(recreated.getUsername()),
+                        "Username index should contain recreated user");
+                assertTrue(userStore.existsByEmail(recreated.getEmail()),
+                        "Email index should contain recreated user");
+                assertTrue(userStore.findById(recreated.getId()).isPresent(),
+                        "byId index should contain recreated user");
+            }
+        }
+
     }
 }
