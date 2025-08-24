@@ -4,11 +4,14 @@ import com.organizer.model.user.User;
 import com.organizer.model.user.UserId;
 import com.organizer.service.user.port.UserStore;
 
+import java.util.Objects;
+
 public class DeleteUserService implements DeleteUserUseCase {
 
     private final UserStore userStore;
 
     public DeleteUserService(UserStore userStore) {
+        Objects.requireNonNull(userStore, "User Store cannot be null");
         this.userStore = userStore;
     }
 

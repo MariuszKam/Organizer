@@ -6,11 +6,14 @@ import com.organizer.model.user.UserId;
 import com.organizer.model.user.Username;
 import com.organizer.service.user.port.UserStore;
 
+import java.util.Objects;
+
 public class UpdateUserService implements UpdateUserUseCase {
 
     private final UserStore userStore;
 
     public UpdateUserService(UserStore userStore) {
+        Objects.requireNonNull(userStore, "User Store cannot be null");
         this.userStore = userStore;
     }
 

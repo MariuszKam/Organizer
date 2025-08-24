@@ -9,11 +9,14 @@ import com.organizer.service.user.usecase.read.command.ReadUserByIdCommand;
 import com.organizer.service.user.usecase.read.command.ReadUserCommand;
 import com.organizer.service.user.usecase.read.command.ReadUserForLoginCommand;
 
+import java.util.Objects;
+
 public class ReadUserService implements ReadUserUseCase {
 
     private final UserStore userStore;
 
     public ReadUserService(UserStore userStore) {
+        Objects.requireNonNull(userStore, "User Store cannot be null");
         this.userStore = userStore;
     }
 
@@ -25,7 +28,7 @@ public class ReadUserService implements ReadUserUseCase {
 
         switch (command) {
             case ReadUserByIdCommand byId -> {
-                return handleReadByID(byId.id());
+                return handleReadById(byId.id());
             }
             case ReadUserForLoginCommand login -> {
                 return handleReadLogin(login.username(), login.email());
@@ -34,7 +37,7 @@ public class ReadUserService implements ReadUserUseCase {
 
     }
 
-    private ReadUserResult handleReadByID(String id) {
+    private ReadUserResult handleReadById(String id) {
         if (id == null) {
             return ReadUserResult.Error.MISSING_USER_ID;
         }
@@ -43,7 +46,7 @@ public class ReadUserService implements ReadUserUseCase {
         try {
             userId = UserId.of(id);
         } catch (IllegalArgumentException e) {
-            return ReadUserResult.Error.INVALID_USER_ID;
+            return ReadUserResult.Error.INVALID_USER_ID_FORMAT;
         }
 
         User user = userStore.findById(userId).orElse(null);
