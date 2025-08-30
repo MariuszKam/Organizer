@@ -33,6 +33,7 @@ public class CreateProjectService implements CreateProjectUseCase {
         }
 
         Project project = new Project(projectName);
+        projectStore.save(project);
         return new CreateProjectResult.Ok(project.getId());
     }
 }
