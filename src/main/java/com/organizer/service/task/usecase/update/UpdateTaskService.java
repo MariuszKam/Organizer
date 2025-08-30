@@ -8,12 +8,12 @@ import com.organizer.service.user.port.UserStore;
 
 import java.util.Objects;
 
-public class UpdateTestService implements UpdateTaskUseCase {
+public class UpdateTaskService implements UpdateTaskUseCase {
 
     private final TaskStore taskStore;
     private final UserStore userStore;
 
-    public UpdateTestService(TaskStore taskStore, UserStore userStore) {
+    public UpdateTaskService(TaskStore taskStore, UserStore userStore) {
         Objects.requireNonNull(taskStore, "Task store cannot be null");
         this.taskStore = taskStore;
         Objects.requireNonNull(userStore, "User store cannot be null");
