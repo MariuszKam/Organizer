@@ -7,7 +7,9 @@ public sealed interface CreateProjectResult {
     }
 
     enum Error implements CreateProjectResult {
-        MISSING_PROJECT_NAME, INVALID_PROJECT_NAME_FORMAT, MISSING_COMMAND
+        MISSING_PROJECT_NAME,
+        INVALID_PROJECT_NAME_FORMAT,
+        MISSING_COMMAND
 
     }
 }
