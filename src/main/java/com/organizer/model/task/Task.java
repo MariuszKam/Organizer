@@ -13,7 +13,7 @@ public final class Task {
     private TaskStatus status;
     private User assignedUser;
 
-    public Task (TaskName name, TaskDescription description) {
+    public Task(TaskName name, TaskDescription description) {
         this(TaskId.newId(), name, description);
     }
 
