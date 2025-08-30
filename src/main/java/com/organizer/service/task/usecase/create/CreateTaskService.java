@@ -8,9 +8,9 @@ import com.organizer.service.task.port.TaskStore;
 import com.organizer.service.task.usecase.create.command.CreateBasicTaskCommand;
 import com.organizer.service.task.usecase.create.command.CreateFullTaskCommand;
 import com.organizer.service.task.usecase.create.command.CreateTaskCommand;
+import com.organizer.service.task.usecase.create.parser.BasicResult;
+import com.organizer.service.task.usecase.create.parser.ResultParser;
 import com.organizer.service.user.port.UserStore;
-import com.organizer.service.user.usecase.create.parser.BasicResult;
-import com.organizer.service.user.usecase.create.parser.ResultParser;
 
 import java.util.Objects;
 
@@ -84,7 +84,7 @@ public class CreateTaskService implements CreateTaskUseCase {
         try {
             userUsername = Username.of(username);
         } catch (IllegalArgumentException e) {
-            return CreateTaskResult.Error.INVALID_USERNAME;
+            return CreateTaskResult.Error.INVALID_USERNAME_FORMAT;
         }
 
         User taskUser = userStore.findByUsername(userUsername).orElse(null);
@@ -107,7 +107,7 @@ public class CreateTaskService implements CreateTaskUseCase {
         BasicResult result = ((ResultParser.Ok<BasicResult>) basicResult).value();
 
         TaskId id = generatorId.generateId();
-        Task task = new Task(result.name(), result.taskDescription());
+        Task task = new Task(id, result.name(), result.taskDescription());
 
         taskStore.save(task);
         return new CreateTaskResult.Ok(id);

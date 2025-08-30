@@ -17,7 +17,8 @@ public sealed interface CreateTaskResult {
         MISSING_TASK_STATUS,
         INVALID_TASK_STATUS_NAME,
         MISSING_USERNAME,
-        INVALID_USERNAME, NON_EXISTING_USER,
+        INVALID_USERNAME_FORMAT,
+        NON_EXISTING_USER,
     }
 
 }
