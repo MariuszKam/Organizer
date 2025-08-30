@@ -6,7 +6,9 @@ import com.organizer.model.user.Username;
 import com.organizer.service.task.port.TaskStore;
 import com.organizer.service.user.port.UserStore;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class UpdateTaskService implements UpdateTaskUseCase {
 
@@ -29,6 +31,8 @@ public class UpdateTaskService implements UpdateTaskUseCase {
         if (command.taskId() == null) {
             return UpdateTaskResult.Error.MISSING_TASK_ID;
         }
+
+        checkCommandForOptionalNull(command);
 
         if (command.name().isEmpty() &&
                 command.description().isEmpty() &&
@@ -114,6 +118,14 @@ public class UpdateTaskService implements UpdateTaskUseCase {
         taskStore.save(updatedTask);
         return new UpdateTaskResult.Ok(taskId);
 
+    }
+
+    private void checkCommandForOptionalNull(UpdateTaskCommand command) {
+        List<Optional<String>> commands = List.of(command.name(), command.description(), command.priority(), command.status(), command.username());
+
+        for (Optional<String> comd : commands) {
+            Objects.requireNonNull(comd, "Command cannot be null");
+        }
     }
 
 }
