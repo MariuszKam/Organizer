@@ -16,7 +16,7 @@ public sealed interface UpdateTaskResult {
         INVALID_TASK_PRIORITY_FORMAT,
         INVALID_TASK_STATUS_FORMAT,
         INVALID_USERNAME_FORMAT,
-        MISSING_COMMAND
+        NON_EXISTING_USER, MISSING_COMMAND
 
     }
 }

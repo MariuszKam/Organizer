@@ -103,6 +103,9 @@ public class UpdateTaskService implements UpdateTaskUseCase {
                 return UpdateTaskResult.Error.INVALID_USERNAME_FORMAT;
             }
             user = userStore.findByUsername(username).orElse(null);
+            if (user == null) {
+                return UpdateTaskResult.Error.NON_EXISTING_USER;
+            }
         } else {
             user = currentTask.getAssignedUser();
         }
