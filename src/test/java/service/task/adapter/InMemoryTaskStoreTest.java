@@ -22,8 +22,8 @@ class InMemoryTaskStoreTest {
         return new Task(id, TaskName.of(name), TaskDescription.of(desc));
     }
 
-    private static Task taskFull(TaskId id, String name, String desc, TaskPriority p, TaskStatus s) {
-        return new Task(id, TaskName.of(name), TaskDescription.of(desc), p, s, null);
+    private static Task taskFull() {
+        return new Task(ID1, TaskName.of("Task B"), TaskDescription.of("desc2"), TaskPriority.HIGH, TaskStatus.IN_PROGRESS, null);
     }
 
     @Nested
@@ -52,7 +52,7 @@ class InMemoryTaskStoreTest {
         void shouldOverwriteTaskWithSameId() {
             InMemoryTaskStore store = new InMemoryTaskStore();
             Task t1 = taskWithDefaults(ID1, "Task A", "desc");
-            Task t2 = taskFull(ID1, "Task B", "desc2", TaskPriority.HIGH, TaskStatus.IN_PROGRESS);
+            Task t2 = taskFull();
 
             store.save(t1);
             store.save(t2); // overwrite
