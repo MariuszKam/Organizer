@@ -7,6 +7,7 @@ public sealed interface ReadTaskResult {
     }
 
     enum Error implements ReadTaskResult {
+        MISSING_TASK_ID, INVALID_TASK_ID_FORMAT, NON_EXISTING_TASK, MISSING_COMMAND
 
     }
 }
