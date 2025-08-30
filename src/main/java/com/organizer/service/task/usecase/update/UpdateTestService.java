@@ -94,21 +94,19 @@ public class UpdateTestService implements UpdateTaskUseCase {
             taskStatus = currentTask.getStatus();
         }
 
-        Username username;
+        User user;
         if (command.username().isPresent()) {
+            Username username;
             try {
                 username = Username.of(command.username().get());
             } catch (IllegalArgumentException e) {
                 return UpdateTaskResult.Error.INVALID_USERNAME_FORMAT;
             }
+            user = userStore.findByUsername(username).orElse(null);
         } else {
-            username = currentTask.getAssignedUser().getUsername();
+            user = currentTask.getAssignedUser();
         }
 
-        User user = userStore.findByUsername(username).orElse(null);
-        if (user == null) {
-            return UpdateTaskResult.Error.NON_EXSISTING_USER;
-        }
         Task updatedTask = new Task(taskId, taskName, taskDescription, taskPriority, taskStatus, user);
         taskStore.save(updatedTask);
         return new UpdateTaskResult.Ok(taskId);
